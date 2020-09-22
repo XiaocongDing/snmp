@@ -99,35 +99,18 @@ static uint16_t ip_checksum(uint16_t initcksum, uint8_t* ptr, int len)
 	return cksum;
 }
 
-static void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
+static void asciiFilter(u_char* buff,int size)
 {
-	struct tm* ltime;
-	char timestr[16];
-	IP_HDR* ih;
-	UDP_HDR* uh;
-	u_int ip_len;
-	u_short sport, dport;
-	time_t local_tv_sec;
-
-	local_tv_sec = header->ts.tv_sec;
-	ltime = localtime(&local_tv_sec);
-	strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-
-
-	printf("%s.%.6d len:%d ", timestr, header->ts.tv_usec, header->len);
-
-
-	ih = (IP_HDR*)(pkt_data +
-		14);
-
-
-	ip_len = (ih->h_lenver & 0xf) * 4;
-	uh = (UDP_HDR*)((u_char*)ih + ip_len);
-
-
-	sport = ntohs(uh->src_port);
-	dport = ntohs(uh->des_port);
-
-	cout << ih->srcIP << "  " << uh->src_port << endl;
-	cout << ih->desIP << "  " << uh->des_port << endl;
+	u_char* temp = buff;
+	
+	int j = 0;
+	for (int i = 0; i < size; i++)
+	{
+		if (buff[i]==32||(buff[i] >= 48 && buff[i] <= 122))
+		{
+			temp[j++] = buff[i];
+		}
+	}
+	temp[j] = '\0';
 }
+

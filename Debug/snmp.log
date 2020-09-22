@@ -5,5 +5,7 @@ C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前�
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp : message : 参见“WIN32”的前一个定义
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(8,7): warning C4101: “ip6str”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(346,33): error C3867: “SendRaw::packet_handler”: 非标准语法；请使用 "&" 来创建指向成员的指针
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(308,7): warning C4101: “buff”: 未引用的局部变量
   正在生成代码...
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(222): warning C4172: 返回局部变量或临时变量的地址: MacArr
+  snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe

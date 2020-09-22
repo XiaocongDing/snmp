@@ -45,8 +45,53 @@ public:
 	bool getlocalmac(char* src);
 	bool getlocalmacbyip(ULONG IP,char *src);
 	int snmpReceive(string ipaddr);
-	void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
+	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
 };
+
+static void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
+{
+	struct tm* ltime;
+	char timestr[16];
+	u_char buff[1000];
+	u_char* p;
+	IP_HDR* ih;
+	UDP_HDR* uh;
+	u_int ip_len;
+	u_short sport, dport;
+	time_t local_tv_sec;
+	in_addr mAddr_des,mAddr_src;
+
+	local_tv_sec = header->ts.tv_sec;
+	ltime = localtime(&local_tv_sec);
+	strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
+
+
+	//printf("%s.%.6d len:%d ", timestr, header->ts.tv_usec, header->len);
+
+
+	ih = (IP_HDR*)(pkt_data +
+		14);
+
+
+	ip_len = (ih->h_lenver & 0xf) * 4;
+	uh = (UDP_HDR*)((u_char*)ih + ip_len);
+
+	p = (u_char*)((u_char*)uh + 53);
+	memcpy(buff, p, header->len - (67 + ip_len));
+
+
+	sport = ntohs(uh->src_port);
+	dport = ntohs(uh->des_port);
+
+	mAddr_src.S_un.S_addr = ih->srcIP;
+	mAddr_des.S_un.S_addr = ih->desIP;
+
+	cout << inet_ntoa(mAddr_src) << "  " << sport << "     ";
+	cout << inet_ntoa(mAddr_des) << "  " << dport << "     ";
+	asciiFilter(buff, header->len - (67 + ip_len));
+	cout << buff << endl;
+}
+
 
 class ReceiveRaw {
 private:

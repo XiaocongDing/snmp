@@ -343,40 +343,8 @@ int SendRaw::snmpReceive(string ipaddr)
 	printf("\nlistening on %s...\n", d->description);
 
 	pcap_freealldevs(alldevs);
-	pcap_loop(fp, 0, &packet_handler, NULL);
+	pcap_loop(fp, 0, packet_handler, NULL);
 
 	return 0;
 }
 
-void SendRaw:: packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
-{
-	struct tm* ltime;
-	char timestr[16];
-	IP_HDR* ih;
-	UDP_HDR* uh;
-	u_int ip_len;
-	u_short sport, dport;
-	time_t local_tv_sec;
-
-	local_tv_sec = header->ts.tv_sec;
-	ltime = localtime(&local_tv_sec);
-	strftime(timestr, sizeof timestr, "%H:%M:%S", ltime);
-
-
-	printf("%s.%.6d len:%d ", timestr, header->ts.tv_usec, header->len);
-
-
-	ih = (IP_HDR*)(pkt_data +
-		14); 
-
-
-	ip_len = (ih->h_lenver & 0xf) * 4;
-	uh = (UDP_HDR*)((u_char*)ih + ip_len);
-
-
-	sport = ntohs(uh->src_port);
-	dport = ntohs(uh->des_port);
-
-	cout << ih->srcIP << "  " << uh->src_port << endl;
-	cout << ih->desIP << "  " << uh->des_port << endl;
-}

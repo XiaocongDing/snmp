@@ -160,7 +160,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FPEngine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="osscan.cpp" />
     <ClCompile Include="snmp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +170,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h" />
+    <ClInclude Include="FPEngine.h" />
+    <ClInclude Include="FPModel.h" />
+    <ClInclude Include="nsock.h" />
+    <ClInclude Include="osscan.h" />
     <ClInclude Include="snmp.h" />
     <ClInclude Include="udp.h" />
   </ItemGroup>

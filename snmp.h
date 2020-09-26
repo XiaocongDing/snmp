@@ -1,6 +1,7 @@
 #pragma once
 #include "basic.h"
 
+
 //#pragma pack(1)
 typedef struct SNMPHDR {
 	u_int hdr;
@@ -52,7 +53,7 @@ static void packet_handler(u_char* param, const struct pcap_pkthdr* header, cons
 {
 	struct tm* ltime;
 	char timestr[16];
-	u_char buff[1000];
+	u_char buff[2000];
 	u_char* p;
 	IP_HDR* ih;
 	UDP_HDR* uh;

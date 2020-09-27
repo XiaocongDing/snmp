@@ -3,6 +3,7 @@
 #define OSSCAN_H
 
 #include<vector>
+#include "Target.h"
 
 #define OSSCAN_SUCCESS 0
 #define OSSCAN_NOMATCHES -1
@@ -59,9 +60,18 @@ struct FingerPrint {
 	FingerPrint();
 	void sort();
 };
+class HostOsScan {
+public:
+	HostOsScan(Target* t);
+	~HostOsScan();
+};
 
 class HostOsScanStats {
 	FingerPrint* FP;
 };
 
+class FingerPrintResults {
+public:
+	FingerPrintResults();
+};
 #endif

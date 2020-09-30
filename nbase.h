@@ -425,3 +425,17 @@ extern "C" {
 #endif
 
 #endif /* NBASE_H */
+
+struct eth_handle {
+    int fd;
+    char device[16];
+};
+
+typedef struct eth_handle eth_t;
+
+struct eth_nfo {
+    char srcmac[6];
+    char dstmac[6];
+    eth_t* ethsd;
+    char devname[16];
+};

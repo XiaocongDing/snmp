@@ -6,6 +6,7 @@
 #include <pcap.h>
 #include <iphlpapi.h>
 #include <String>
+#include <assert.h>
 using namespace std;
 
 #pragma comment(lib,"../lib/Packet.lib")

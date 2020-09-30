@@ -1,4 +1,34 @@
-﻿  main.cpp
+﻿  FPEngine.cpp
+  main.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前一个定义
-  snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe
+C:\Users\Z\source\repos\snmp\snmp\Target.h(12,1): warning C4005: “INET6_ADDRSTRLEN”: 宏重定义
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\ws2ipdef.h(936): message : 参见“INET6_ADDRSTRLEN”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\osscan.h(68,36): error C2061: 语法错误: 标识符“HostOsScanStats”
+  osscan.cpp
+C:\Users\Z\source\repos\snmp\snmp\Target.h(17,17): error C2079: “host_timeout_nfo::toclock_start”使用未定义的 struct“timeval”
+C:\Users\Z\source\repos\snmp\snmp\osscan.h(68,36): error C2061: 语法错误: 标识符“HostOsScanStats”
+C:\Users\Z\source\repos\snmp\snmp\osscan.cpp(9,1): error C2511: “int HostOsScan::send_tcp_probe(HostOsScanStats *,int,bool,u8 *,int,u16,u16,u32,u32,u8,u8,u16,u16,u8 *,int,char *,u16)”:“HostOsScan”中没有找到重载的成员函数
+C:\Users\Z\source\repos\snmp\snmp\osscan.h(63): message : 参见“HostOsScan”的声明
+  tcpip.cpp
+C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp : message : 参见“WIN32”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(79,11): error C3861: “send_ip_packet”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(95,29): error C2065: “o”: 未声明的标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(97,37): error C2065: “o”: 未声明的标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(96,13): error C2660: “send_tcp_raw”: 函数不接受 19 个参数
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(55,5): message : 参见“send_tcp_raw”的声明
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(120,19): error C3861: “ipv4_cksum”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(121,10): error C3861: “build_ip_raw”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(137,8): error C2027: 使用了未定义类型“send_ip_packet::ip”
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(131): message : 参见“send_ip_packet::ip”的声明
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(138,9): error C3861: “assert”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(139,16): error C3861: “send_ipv4_packet”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(141,13): error C2027: 使用了未定义类型“send_ip_packet::ip”
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(131): message : 参见“send_ip_packet::ip”的声明
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(142,9): error C3861: “assert”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(143,16): error C3861: “send_ipv6_packet”: 找不到标识符
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(146,75): error C2027: 使用了未定义类型“send_ip_packet::ip”
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(131): message : 参见“send_ip_packet::ip”的声明
+C:\Users\Z\source\repos\snmp\snmp\tcpip.cpp(146,5): error C3861: “fatal”: 找不到标识符
+  正在生成代码...

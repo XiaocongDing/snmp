@@ -31,6 +31,8 @@ private:
 	pcap_t* fp;
 	char buff[200];
 	struct bpf_program fcode;
+	char* MacAddr;
+	char* MacLocal;
 
 	string lhIP;
 	char errbuf[PCAP_ERRBUF_SIZE];
@@ -48,7 +50,8 @@ public:
 	char* iptos(u_long in);
 	void ifprint(pcap_if_t* d);
 	int snmpScan(string ipaddr);
-	int tcpScan(string ipaddr);
+	int tcpScanpre(string ipaddr);
+	int tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win);
 	char* getMac(u_long ip);
 	bool getlocalmac(char* src);
 	bool getlocalmacbyip(ULONG IP,char *src);

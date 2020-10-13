@@ -36,10 +36,14 @@ typedef struct TCPHDR
 	uint16_t	th_dport;	/* destination port */
 	uint32_t	th_seq;		/* sequence number */
 	uint32_t	th_ack;		/* acknowledgment number */
-	uint16_t		th_flags;	/* control flags */
+	uint8_t		th_hdlen;	/*tcp header length*/
+	uint8_t		th_flags;	/* control flags */
 	uint16_t	th_win;		/* window */
 	uint16_t	th_sum;		/* checksum */
 	uint16_t	th_urp;
+	uint8_t		th_kind;
+	uint8_t		th_len;
+	uint16_t	th_mss;
 }TCP_HDR,*pTCP_HDR;
 
 typedef struct UDPHDR

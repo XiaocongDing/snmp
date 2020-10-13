@@ -84,10 +84,83 @@ char * SendRaw::iptos(u_long in)
 	sprintf(output[which], "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
 	return output[which];
 }
+//pre
 
-int SendRaw::tcpScan(string ipaddr)
+int SendRaw::tcpScanpre(string ipaddr)
 {
-	
+	d = IpfindIf(ipaddr);
+	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
+	if (fp == NULL)
+	{
+		exit(1);
+	}
+	MacAddr = getMac(inet_addr(ipaddr.c_str()));
+	MacLocal = (char*)malloc(sizeof(MacLocal));
+	getlocalmacbyip(inet_addr(ipaddr.c_str()), MacLocal);
+}
+int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
+{
+	//Ethernet
+	memcpy(packet, MacAddr, 6);
+	memcpy(packet + 6, MacLocal, 6);
+	packet[12] = 0x08;
+	packet[13] = 0x00;
+	//IPHDR
+	IPHDR iphdr;
+	iphdr.h_lenver = 0x45;
+	iphdr.tos = 0x00;
+	iphdr.total_len = 0;
+	iphdr.ident = 0xcdbb;
+	iphdr.frag_and_flags = 0x00;
+	iphdr.ttl = 0x38;
+	iphdr.proto = 0x06;
+	iphdr.checksum = 0x00;
+	iphdr.srcIP = inet_addr(lhIP.c_str());
+	iphdr.desIP = inet_addr(ipaddr.c_str());
+	//TCP
+	TCPHDR tcphdr;
+	tcphdr.th_sport = htons(66666);
+	tcphdr.th_dport = htons(dport);
+	tcphdr.th_seq = rand();
+	tcphdr.th_ack = 0x00;
+	tcphdr.th_hdlen = 0x60;
+	tcphdr.th_flags = flags;
+	tcphdr.th_win = htons(win);
+	tcphdr.th_sum = 0x00;
+	tcphdr.th_win = 0x00;
+	tcphdr.th_kind = 0x02;
+	tcphdr.th_len = 0x04;
+	tcphdr.th_mss = htons(1460);
+
+	memcpy(buff, &iphdr.srcIP, sizeof(int));
+	memcpy(buff + 4, &iphdr.desIP, sizeof(int));
+	u_short t = 0x0600;
+	u_short len = 0x2400;
+	memcpy(buff + 8, &t, sizeof(u_short));
+	memcpy(buff + 10, &len, sizeof(u_short));
+	memcpy(buff + 12, &tcphdr, sizeof(tcphdr));
+	tcphdr.th_sum= checksum((USHORT*)buff,12 + sizeof(tcphdr));
+
+	iphdr.total_len = htons(sizeof(iphdr) + sizeof(tcphdr));
+	memcpy(buff, &iphdr, sizeof(iphdr));
+	iphdr.checksum = checksum((USHORT*)buff, sizeof(iphdr));
+
+	memcpy(buff, &iphdr, sizeof(iphdr));
+	memcpy(buff + sizeof(iphdr), &tcphdr, sizeof(tcphdr));
+	memcpy(packet + 14, buff, sizeof(iphdr) + sizeof(tcphdr));
+
+	int i = 10;
+	while (i--)
+	{
+		if (pcap_sendpacket(fp,
+			packet,
+			14 + sizeof(iphdr) + sizeof(tcphdr)
+		) != 0)
+		{
+			fprintf(stderr, "\nError sending the packet : %s\n", pcap_geterr(fp));
+			return 3;
+		}
+	}
 	return 0;
 }
 
@@ -172,8 +245,6 @@ int SendRaw::snmpScan(string ipaddr)
 		exit(1);
 	}
 	//Ethernet
-	char* MacAddr;
-	char* MacLocal;
 	MacAddr = getMac(inet_addr(ipaddr.c_str()));
 	memcpy(packet, MacAddr, 6);
 	MacLocal=(char *)malloc(sizeof(MacLocal));
@@ -278,6 +349,7 @@ int SendRaw::snmpScan(string ipaddr)
 	pcap_close(fp);
 	return 0;
 }
+
 
 char* SendRaw::getMac(u_long ip)
 {

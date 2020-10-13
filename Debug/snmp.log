@@ -4,5 +4,5 @@ C:\Users\Z\source\repos\snmp\snmp\snmp.cpp : message : 参见“WIN32”的前�
 C:\Users\Z\source\repos\snmp\snmp\snmp.h(93,9): warning C4101: “buff”: 未引用的局部变量
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(8,7): warning C4101: “ip6str”: 未引用的局部变量
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(128): warning C4715: “SendRaw::setFilter”: 不是所有的控件路径都返回值
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(295): warning C4172: 返回局部变量或临时变量的地址: MacArr
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(292): warning C4172: 返回局部变量或临时变量的地址: MacArr
   snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe

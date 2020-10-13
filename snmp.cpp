@@ -130,19 +130,19 @@ int SendRaw::setFilter(string ipaddr,char packet_filter[])
 typedef struct __THREAD_DATA
 {
 	pcap_t* fp;
+	DWORD timeout;
 }THREAD_DATA;	
 
 DWORD WINAPI ThreadProc1(LPVOID lp)
 {
 	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
 	pcap_loop(pThreadData->fp, 2000, tcp_packet_handler, NULL);
-	cout << "thread1 timeout" << endl;
 	return 0L;
 }
 DWORD WINAPI ThreadProc2(LPVOID lp)
 {
 	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
-	Sleep(10000);
+	Sleep(pThreadData->timeout);
 	pcap_breakloop(pThreadData->fp);
 	pcap_close(pThreadData->fp);
 	return 0L;
@@ -155,12 +155,12 @@ int SendRaw::tcpReceive(string ipaddr)
 	setFilter(ipaddr, (char*)packet_filter.c_str());
 	THREAD_DATA threadData;
 	threadData.fp = fp;
+	threadData.timeout = 130000;
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
 	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
-	Sleep(9000); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	Sleep(12000); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
 	CloseHandle(thread2);
-	//system("pause");
 	return 0;
 }
 int SendRaw::snmpScan(string ipaddr)

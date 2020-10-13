@@ -46,14 +46,14 @@ void SendRaw ::ifprint(pcap_if_t *d)
 pcap_if_t * SendRaw:: IpfindIf(string ipv4)
 {
 	pcap_addr_t *a;
-	pcap_if_t *d;
+	pcap_if_t *p;
 	string t;
 	int end = ipv4.find_last_of('.');
 	ipv4 = ipv4.substr(0, end);
 	
-	for( d =alldevs ; d ; d = d->next)
+	for( p =alldevs ; p ; p = p->next)
 	{
-		for(a = d->addresses; a ; a=a->next)
+		for(a = p->addresses; a ; a=a->next)
 		{
 			if (a->addr->sa_family == AF_INET)
 			{
@@ -61,7 +61,10 @@ pcap_if_t * SendRaw:: IpfindIf(string ipv4)
 				lhIP = t;
 				t = t.substr(0, end);
 				if (!ipv4.compare(t))
-					return d;
+				{
+					d = p;
+					return p;
+				}
 			}
 		}
 	}
@@ -82,12 +85,86 @@ char * SendRaw::iptos(u_long in)
 	return output[which];
 }
 
-int SendRaw::snmpScan(string ipaddr)
+int SendRaw::tcpScan(string ipaddr)
 {
-	pcap_if_t* d;
-	pcap_t* fp;
-	char buff[200];
 	
+	return 0;
+}
+
+int SendRaw::setFilter(string ipaddr,char packet_filter[])
+{
+	u_int netmask;
+	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
+	if (fp == NULL)
+	{
+		exit(1);
+	}
+	if (pcap_datalink(fp) != DLT_EN10MB)
+	{
+		pcap_freealldevs(alldevs);
+		return -1;
+	}
+	if (d->addresses != NULL)
+
+		netmask = ((struct sockaddr_in*)(d->addresses->netmask))->sin_addr.S_un.S_addr;
+	else
+
+		netmask = 0xffffff;
+	if (pcap_compile(fp, &fcode, packet_filter, 1, netmask) < 0)
+	{
+		fprintf(stderr, "\nUnable to compile the packet filter. Check the syntax.\n");
+		pcap_freealldevs(alldevs);
+		return -1;
+	}
+	if (pcap_setfilter(fp, &fcode) < 0)
+	{
+		fprintf(stderr, "\nError setting the filter.\n");
+		pcap_freealldevs(alldevs);
+		return -1;
+	}
+	printf("\nlistening on %s...\n", d->description);
+
+	pcap_freealldevs(alldevs);
+}
+
+typedef struct __THREAD_DATA
+{
+	pcap_t* fp;
+}THREAD_DATA;	
+
+DWORD WINAPI ThreadProc1(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	pcap_loop(pThreadData->fp, 2000, tcp_packet_handler, NULL);
+	cout << "thread1 timeout" << endl;
+	return 0L;
+}
+DWORD WINAPI ThreadProc2(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	Sleep(10000);
+	pcap_breakloop(pThreadData->fp);
+	pcap_close(pThreadData->fp);
+	return 0L;
+}
+
+int SendRaw::tcpReceive(string ipaddr)
+{
+	string packet_filter = "tcp and host ";
+	packet_filter = packet_filter + ipaddr;
+	setFilter(ipaddr, (char*)packet_filter.c_str());
+	THREAD_DATA threadData;
+	threadData.fp = fp;
+	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
+	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
+	Sleep(9000); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	CloseHandle(thread1); // if thread1 = null, an error occurs.
+	CloseHandle(thread2);
+	//system("pause");
+	return 0;
+}
+int SendRaw::snmpScan(string ipaddr)
+{	
 	d = IpfindIf(ipaddr);
 	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
 	if (fp == NULL)
@@ -188,7 +265,6 @@ int SendRaw::snmpScan(string ipaddr)
 	int i = 10;
 	while (i--)
 	{
-
 		if (pcap_sendpacket(fp,
 			packet,
 			14 + sizeof(iphdr) + sizeof(udphdr) + sizeof(snmphdr)
@@ -198,14 +274,7 @@ int SendRaw::snmpScan(string ipaddr)
 			return 3;
 		}
 	}
-	if (pcap_sendpacket(fp,
-		packet,
-		14 + sizeof(iphdr) + sizeof(udphdr) + sizeof(snmphdr)
-	) != 0)
-	{
-		fprintf(stderr, "\nError sending the packet : %s\n", pcap_geterr(fp));
-		return 3;
-	}
+	
 	pcap_close(fp);
 	return 0;
 }
@@ -267,6 +336,7 @@ bool SendRaw::getlocalmac(char* sMac)
 
 	return bRtn;
 }
+
 bool SendRaw::getlocalmacbyip(ULONG IP,char *src)
 {
 	ULONG ulAdapterInfoSize = sizeof(IP_ADAPTER_INFO);
@@ -303,48 +373,13 @@ bool SendRaw::getlocalmacbyip(ULONG IP,char *src)
 
 int SendRaw::snmpReceive(string ipaddr)
 {
-	pcap_if_t* d;
-	pcap_t* fp;
-	char buff[200];
-	u_int netmask;
-	char packet_filter[] = "ip and udp";
-	struct bpf_program fcode;
-
-	d = IpfindIf(ipaddr);
-	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
-	if (fp == NULL)
-	{
-		exit(1);
-	}
-	if (pcap_datalink(fp) != DLT_EN10MB)
-	{
-		pcap_freealldevs(alldevs);
-		return -1;
-	}
-	if (d->addresses != NULL)
-
-		netmask = ((struct sockaddr_in*)(d->addresses->netmask))->sin_addr.S_un.S_addr;
-	else
-
-		netmask = 0xffffff;
-	if (pcap_compile(fp, &fcode, packet_filter, 1, netmask) < 0)
-	{
-		fprintf(stderr, "\nUnable to compile the packet filter. Check the syntax.\n");
-		pcap_freealldevs(alldevs);
-		return -1;
-	}
-	if (pcap_setfilter(fp, &fcode) < 0)
-	{
-		fprintf(stderr, "\nError setting the filter.\n");
-		pcap_freealldevs(alldevs);
-		return -1;
-	}
-
-	printf("\nlistening on %s...\n", d->description);
-
-	pcap_freealldevs(alldevs);
-	pcap_loop(fp, 0, packet_handler, NULL);
-
+	char packet_filter[] = "udp dst port 60340";
+	setFilter(ipaddr, packet_filter);
+	pcap_loop(fp, 1, snmp_packet_handler, NULL);
+	pcap_breakloop(fp);
+	pcap_close(fp);
 	return 0;
 }
+
+
 

@@ -1,4 +1,6 @@
 #include "tcpip.h"
+#define o.numdecoys 10
+
 
 static u8* build_tcp(u16 sport, u16 dport, u32 seq, u32 ack, u8 reserved,
     u8 flags, u16 window, u16 urp,
@@ -320,11 +322,11 @@ int send_ip_packet_eth(const struct eth_nfo* eth, const u8* packet, unsigned int
 
     eth_frame = (u8*)safe_malloc(14 + packetlen);
     memcpy(eth_frame + 14, packet, packetlen);
-    eth_pack_hdr(eth_frame, eth->dstmac, eth->srcmac, ETH_TYPE_IP);
+    //eth_pack_hdr(eth_frame, eth->dstmac, eth->srcmac, ETH_TYPE_IP);
     if (!eth->ethsd) {
-        ethsd = eth_open_cached(eth->devname);
-        if (!ethsd)
-            netutil_fatal("%s: Failed to open ethernet device (%s)", __func__, eth->devname);
+     //   ethsd = eth_open_cached(eth->devname);
+       // if (!ethsd)
+       //     netutil_fatal("%s: Failed to open ethernet device (%s)", __func__, eth->devname);
     }
     else {
         ethsd = eth->ethsd;

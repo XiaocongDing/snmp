@@ -21,45 +21,18 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="osscan.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="FPEngine.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tcpip.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="snmp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="udp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="basic.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="osscan.h">
+    <ClInclude Include="snmp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FPModel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="FPEngine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="nsock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tcpip.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="nbase.h">
+    <ClInclude Include="tcp.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

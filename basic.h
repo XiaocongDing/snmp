@@ -7,6 +7,8 @@
 #include <iphlpapi.h>
 #include <String>
 #include <assert.h>
+#include <signal.h>
+#include <Windows.h>
 using namespace std;
 
 #pragma comment(lib,"../lib/Packet.lib")
@@ -27,6 +29,18 @@ typedef struct IPHDR
 	u_int srcIP;
 	u_int desIP;
 }IP_HDR,*pIP_HDR;
+
+typedef struct TCPHDR
+{
+	uint16_t	th_sport;	/* source port */
+	uint16_t	th_dport;	/* destination port */
+	uint32_t	th_seq;		/* sequence number */
+	uint32_t	th_ack;		/* acknowledgment number */
+	uint16_t		th_flags;	/* control flags */
+	uint16_t	th_win;		/* window */
+	uint16_t	th_sum;		/* checksum */
+	uint16_t	th_urp;
+}TCP_HDR,*pTCP_HDR;
 
 typedef struct UDPHDR
 {
@@ -54,6 +68,41 @@ static unsigned short checksum(unsigned short* addr, unsigned int count) {
 	sum = ~sum;
 	return ((unsigned short)sum);
 }
+
+//unsigned short ipv4_pseudoheader_cksum(const struct in_addr* src,
+//	const struct in_addr* dst, u8 proto, u16 len, const void* hstart) {
+//	struct pseudo {
+//		struct in_addr src;
+//		struct in_addr dst;
+//		u8 zero;
+//		u8 proto;
+//		u16 length;
+//	} hdr;
+//	int sum;
+//
+//	hdr.src = *src;
+//	hdr.dst = *dst;
+//	hdr.zero = 0;
+//	hdr.proto = proto;
+//	hdr.length = htons(len);
+//
+//	/* Get the ones'-complement sum of the pseudo-header. */
+//	sum = ip_cksum_add(&hdr, sizeof(hdr), 0);
+//	/* Add it to the sum of the packet. */
+//	sum = ip_cksum_add(hstart, len, sum);
+//
+//	/* Fold in the carry, take the complement, and return. */
+//	sum = ip_cksum_carry(sum);
+//	/* RFC 768: "If the computed  checksum  is zero,  it is transmitted  as all
+//	 * ones (the equivalent  in one's complement  arithmetic).   An all zero
+//	 * transmitted checksum  value means that the transmitter  generated  no
+//	 * checksum" */
+//	if (proto == IP_PROTO_UDP && sum == 0)
+//		sum = 0xFFFF;
+//
+//	return sum;
+//}
+
 
 static uint32_t swap_endian(uint32_t val)
 {

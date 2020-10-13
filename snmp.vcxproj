@@ -160,25 +160,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FPEngine.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="osscan.cpp" />
     <ClCompile Include="snmp.cpp" />
-    <ClCompile Include="tcpip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h" />
-    <ClInclude Include="FPEngine.h" />
-    <ClInclude Include="FPModel.h" />
-    <ClInclude Include="nbase.h" />
-    <ClInclude Include="nsock.h" />
-    <ClInclude Include="osscan.h" />
     <ClInclude Include="snmp.h" />
-    <ClInclude Include="tcpip.h" />
-    <ClInclude Include="udp.h" />
+    <ClInclude Include="tcp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

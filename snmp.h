@@ -38,6 +38,8 @@ private:
 	char errbuf[PCAP_ERRBUF_SIZE];
 	u_char packet[200];
 
+	vector<int> tcp_open_ps;
+
 public:
 	SendRaw()
 	{
@@ -52,15 +54,22 @@ public:
 	int snmpScan(string ipaddr);
 	int tcpScanpre(string ipaddr);
 	int tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win);
+	int tcpScanPortList(string ipaddr, vector<uint16_t>& ports);
 	char* getMac(u_long ip);
 	bool getlocalmac(char* src);
 	bool getlocalmacbyip(ULONG IP,char *src);
 	int snmpReceive(string ipaddr);
 	int tcpReceive(string ipaddr);
 	int setFilter(string ipaddr, char packet_filter[]);
+	void getTcpOpenPorts(vector<int> &tcp_open_p);
+
+	int tcpScan2(string ipaddr, vector<uint16_t> &ports);
+	void get_fp(pcap_t* p);
 	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
 };
 
+
+static vector<int> tcp_open_ports;
 
 static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
 {
@@ -91,6 +100,9 @@ static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header,
 	asciiFilter(buff, header->len - (67 + ip_len));
 	cout << buff << endl;
 }
+
+
+
 static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
 {
 	u_char buff[2000];
@@ -104,21 +116,21 @@ static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, 
 	ih = (IP_HDR*)(pkt_data + 14);
 
 	ip_len = (ih->h_lenver & 0xf) * 4;
+	
 	th = (TCP_HDR*)((u_char*)ih + ip_len);
-
-	p = (u_char*)((u_char*)th + 53);
+	p = (u_char*)((u_char*)th + 24);
 	//memcpy(buff, p, header->len - (67 + ip_len));
 
 	sport = ntohs(th->th_sport);
 	dport = ntohs(th->th_dport);
+
+	tcp_open_ports.push_back((int)sport);
 
 	mAddr_src.S_un.S_addr = ih->srcIP;
 	mAddr_des.S_un.S_addr = ih->desIP;
 
 	cout << inet_ntoa(mAddr_src) << "  " << sport << "     ";
 	cout << inet_ntoa(mAddr_des) << "  " << dport << "     ";
-	//asciiFilter(buff, header->len - (67 + ip_len));
-	cout << pkt_data << endl;
 }
 
 class ReceiveRaw {

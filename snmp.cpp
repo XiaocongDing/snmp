@@ -1,5 +1,41 @@
 ﻿#include "snmp.h"
 
+typedef struct __THREAD_DATA
+{
+	pcap_t* fp;
+	DWORD timeout;
+	vector<uint16_t> ports;
+	string ip;
+}THREAD_DATA;
+
+DWORD WINAPI ThreadProc1(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	pcap_loop(pThreadData->fp, 2000, tcp_packet_handler, NULL);
+	return 0L;
+}
+DWORD WINAPI ThreadProc2(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	Sleep(pThreadData->timeout);
+	pcap_breakloop(pThreadData->fp);
+	pcap_close(pThreadData->fp);
+	return 0L;
+}
+DWORD WINAPI ThreadSendPacket(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	SendRaw b;
+	b.get_fp(pThreadData->fp);
+	//b.tcpScanPortList(pThreadData->ip, pThreadData->ports);
+	return 0L;
+}
+
+void SendRaw::get_fp(pcap_t* p)
+{
+	this->fp = p;
+}
+
 void SendRaw ::ifprint(pcap_if_t *d)
 {
 	if (d == NULL)
@@ -94,13 +130,13 @@ int SendRaw::tcpScanpre(string ipaddr)
 	{
 		exit(1);
 	}
-	MacAddr = getMac(inet_addr(ipaddr.c_str()));
 	MacLocal = (char*)malloc(sizeof(MacLocal));
 	getlocalmacbyip(inet_addr(ipaddr.c_str()), MacLocal);
 }
 int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 {
 	//Ethernet
+	MacAddr = getMac(inet_addr(ipaddr.c_str()));
 	memcpy(packet, MacAddr, 6);
 	memcpy(packet + 6, MacLocal, 6);
 	packet[12] = 0x08;
@@ -119,7 +155,7 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	iphdr.desIP = inet_addr(ipaddr.c_str());
 	//TCP
 	TCPHDR tcphdr;
-	tcphdr.th_sport = htons(66666);
+	tcphdr.th_sport = htons(26666);
 	tcphdr.th_dport = htons(dport);
 	tcphdr.th_seq = rand();
 	tcphdr.th_ack = 0x00;
@@ -128,14 +164,16 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	tcphdr.th_win = htons(win);
 	tcphdr.th_sum = 0x00;
 	tcphdr.th_win = 0x00;
+	tcphdr.th_urp = 0x00;
 	tcphdr.th_kind = 0x02;
 	tcphdr.th_len = 0x04;
 	tcphdr.th_mss = htons(1460);
 
+	
 	memcpy(buff, &iphdr.srcIP, sizeof(int));
 	memcpy(buff + 4, &iphdr.desIP, sizeof(int));
 	u_short t = 0x0600;
-	u_short len = 0x2400;
+	u_short len = 0x1800;
 	memcpy(buff + 8, &t, sizeof(u_short));
 	memcpy(buff + 10, &len, sizeof(u_short));
 	memcpy(buff + 12, &tcphdr, sizeof(tcphdr));
@@ -149,21 +187,28 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	memcpy(buff + sizeof(iphdr), &tcphdr, sizeof(tcphdr));
 	memcpy(packet + 14, buff, sizeof(iphdr) + sizeof(tcphdr));
 
-	int i = 10;
-	while (i--)
+	if (pcap_sendpacket(fp,
+		packet,
+		14 + sizeof(iphdr) + sizeof(tcphdr)
+	) != 0)
 	{
-		if (pcap_sendpacket(fp,
-			packet,
-			14 + sizeof(iphdr) + sizeof(tcphdr)
-		) != 0)
-		{
-			fprintf(stderr, "\nError sending the packet : %s\n", pcap_geterr(fp));
-			return 3;
-		}
+		fprintf(stderr, "\nError sending the packet : %s\n", pcap_geterr(fp));
+		return 3;
 	}
+
 	return 0;
 }
 
+int SendRaw::tcpScanPortList(string ipaddr, vector<uint16_t> &ports)
+{
+	tcpScanpre(ipaddr);
+	for (int i = 0; i < ports.size(); i++)
+	{
+		tcpScan(ipaddr, ports[i], 2, 1024);
+	}
+	tcpReceive(ipaddr);
+	return 0;
+}
 int SendRaw::setFilter(string ipaddr,char packet_filter[])
 {
 	u_int netmask;
@@ -200,40 +245,40 @@ int SendRaw::setFilter(string ipaddr,char packet_filter[])
 	pcap_freealldevs(alldevs);
 }
 
-typedef struct __THREAD_DATA
+int SendRaw::tcpScan2(string ipaddr,vector<uint16_t> &ports)
 {
-	pcap_t* fp;
-	DWORD timeout;
-}THREAD_DATA;	
-
-DWORD WINAPI ThreadProc1(LPVOID lp)
-{
-	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
-	pcap_loop(pThreadData->fp, 2000, tcp_packet_handler, NULL);
-	return 0L;
-}
-DWORD WINAPI ThreadProc2(LPVOID lp)
-{
-	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
-	Sleep(pThreadData->timeout);
-	pcap_breakloop(pThreadData->fp);
-	pcap_close(pThreadData->fp);
-	return 0L;
-}
-
-int SendRaw::tcpReceive(string ipaddr)
-{
-	string packet_filter = "tcp and host ";
+	string packet_filter = "tcp and src host ";
 	packet_filter = packet_filter + ipaddr;
 	setFilter(ipaddr, (char*)packet_filter.c_str());
 	THREAD_DATA threadData;
 	threadData.fp = fp;
-	threadData.timeout = 130000;
+	threadData.timeout = 150000;
+	threadData.ports = ports;
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
 	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
-	Sleep(12000); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	HANDLE thread3 = CreateThread(NULL, 0, ThreadSendPacket, &threadData, 0, NULL);
+	Sleep(14000); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
 	CloseHandle(thread2);
+	CloseHandle(thread3);
+	getTcpOpenPorts(tcp_open_ports);
+	return 0;
+}
+
+int SendRaw::tcpReceive(string ipaddr)
+{
+	string packet_filter = "tcp and src host ";
+	packet_filter = packet_filter + ipaddr;
+	setFilter(ipaddr, (char*)packet_filter.c_str());
+	THREAD_DATA threadData;
+	threadData.fp = fp;
+	threadData.timeout = 150000;
+	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
+	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
+	Sleep(14000); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	CloseHandle(thread1); // if thread1 = null, an error occurs.
+	CloseHandle(thread2);
+	getTcpOpenPorts(tcp_open_ports);
 	return 0;
 }
 int SendRaw::snmpScan(string ipaddr)
@@ -453,5 +498,21 @@ int SendRaw::snmpReceive(string ipaddr)
 	return 0;
 }
 
-
+void SendRaw::getTcpOpenPorts(vector<int> &tcp_open_p)
+{
+	cout << "finished" << endl;
+	
+	tcp_open_ps.push_back(tcp_open_p[0]);
+	vector<int>::iterator it;
+	for (int i=1; i<tcp_open_p.size(); i++)
+	{
+		it = find(tcp_open_ps.begin(), tcp_open_ps.end(), tcp_open_p[i]);
+		if (it == tcp_open_ps.end())
+			tcp_open_ps.push_back(tcp_open_p[i]);
+	}
+	for (int i = 0; i < tcp_open_ps.size(); i++)
+	{
+		cout << tcp_open_ps[i] << "\topen" << endl;
+	}
+}
 

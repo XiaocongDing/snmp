@@ -9,6 +9,9 @@
 #include <assert.h>
 #include <signal.h>
 #include <Windows.h>
+#include <vector>
+#include <fstream>
+#include <algorithm>
 using namespace std;
 
 #pragma comment(lib,"../lib/Packet.lib")
@@ -72,40 +75,6 @@ static unsigned short checksum(unsigned short* addr, unsigned int count) {
 	sum = ~sum;
 	return ((unsigned short)sum);
 }
-
-//unsigned short ipv4_pseudoheader_cksum(const struct in_addr* src,
-//	const struct in_addr* dst, u8 proto, u16 len, const void* hstart) {
-//	struct pseudo {
-//		struct in_addr src;
-//		struct in_addr dst;
-//		u8 zero;
-//		u8 proto;
-//		u16 length;
-//	} hdr;
-//	int sum;
-//
-//	hdr.src = *src;
-//	hdr.dst = *dst;
-//	hdr.zero = 0;
-//	hdr.proto = proto;
-//	hdr.length = htons(len);
-//
-//	/* Get the ones'-complement sum of the pseudo-header. */
-//	sum = ip_cksum_add(&hdr, sizeof(hdr), 0);
-//	/* Add it to the sum of the packet. */
-//	sum = ip_cksum_add(hstart, len, sum);
-//
-//	/* Fold in the carry, take the complement, and return. */
-//	sum = ip_cksum_carry(sum);
-//	/* RFC 768: "If the computed  checksum  is zero,  it is transmitted  as all
-//	 * ones (the equivalent  in one's complement  arithmetic).   An all zero
-//	 * transmitted checksum  value means that the transmitter  generated  no
-//	 * checksum" */
-//	if (proto == IP_PROTO_UDP && sum == 0)
-//		sum = 0xFFFF;
-//
-//	return sum;
-//}
 
 
 static uint32_t swap_endian(uint32_t val)

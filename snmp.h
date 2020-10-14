@@ -131,6 +131,7 @@ static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, 
 
 	cout << inet_ntoa(mAddr_src) << "  " << sport << "     ";
 	cout << inet_ntoa(mAddr_des) << "  " << dport << "     ";
+	cout << endl;192
 }
 
 class ReceiveRaw {

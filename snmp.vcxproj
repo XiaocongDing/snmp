@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="scan.cpp" />
     <ClCompile Include="snmp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic.h" />
+    <ClInclude Include="scan.h" />
     <ClInclude Include="snmp.h" />
     <ClInclude Include="tcp.h" />
   </ItemGroup>

@@ -24,6 +24,8 @@ typedef struct SNMPHDR {
 }SNMP_HDR,*pSNMP_HDR;
 
 
+
+
 class SendRaw {
 private:
 	pcap_if_t* alldevs;
@@ -39,6 +41,7 @@ private:
 	u_char packet[200];
 
 	vector<int> tcp_open_ps;
+	vector<string> fingerprints;
 
 public:
 	SendRaw()
@@ -53,23 +56,28 @@ public:
 	void ifprint(pcap_if_t* d);
 	int snmpScan(string ipaddr);
 	int tcpScanpre(string ipaddr);
-	int tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win);
+	int tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags, uint16_t win,uint16_t ipflag);
 	int tcpScanPortList(string ipaddr, vector<uint16_t>& ports);
 	char* getMac(u_long ip);
 	bool getlocalmac(char* src);
 	bool getlocalmacbyip(ULONG IP,char *src);
 	int snmpReceive(string ipaddr);
-	int tcpReceive(string ipaddr);
+	int tcpReceive(string ipaddr, int timeout);
 	int setFilter(string ipaddr, char packet_filter[]);
 	void getTcpOpenPorts(vector<int> &tcp_open_p);
 
 	int tcpScan2(string ipaddr, vector<uint16_t> &ports);
 	void get_fp(pcap_t* p);
+	void OS_fp_get(string ipaddr);
+	void free_alldevs();
+
+	int snmpGet(string ipaddr, int timeout);
 	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
 };
 
 
 static vector<int> tcp_open_ports;
+static u_char packetdata[2000];
 
 static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
 {
@@ -131,7 +139,10 @@ static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, 
 
 	cout << inet_ntoa(mAddr_src) << "  " << sport << "     ";
 	cout << inet_ntoa(mAddr_des) << "  " << dport << "     ";
-	cout << endl;192
+	cout << endl;
+
+	memcpy(packetdata, pkt_data, header->len);
+	packetdata[header->len] = '\0';
 }
 
 class ReceiveRaw {

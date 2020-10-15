@@ -14,6 +14,7 @@ DWORD WINAPI ThreadProc1(LPVOID lp)
 	pcap_loop(pThreadData->fp, 2000, tcp_packet_handler, NULL);
 	return 0L;
 }
+
 DWORD WINAPI ThreadProc2(LPVOID lp)
 {
 	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
@@ -28,6 +29,13 @@ DWORD WINAPI ThreadSendPacket(LPVOID lp)
 	SendRaw b;
 	b.get_fp(pThreadData->fp);
 	//b.tcpScanPortList(pThreadData->ip, pThreadData->ports);
+	return 0L;
+}
+
+DWORD WINAPI ThreadSnmp(LPVOID lp)
+{
+	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
+	pcap_loop(pThreadData->fp, 1, snmp_packet_handler, NULL);
 	return 0L;
 }
 
@@ -121,6 +129,68 @@ char * SendRaw::iptos(u_long in)
 	return output[which];
 }
 //pre
+void SendRaw::OS_fp_get(string ipaddr)
+{
+	vector<int> unports = { 23332,23334,23335,34523,12232,24322,23421,23412,19731 };
+	vector<int>::iterator it;
+	int i = 0;
+	for (; i < unports.size(); i++)
+	{
+		it = find(tcp_open_ps.begin(), tcp_open_ps.end(), unports[i]);
+		if (it == tcp_open_ps.end())
+			break;
+	}
+	
+	if (tcp_open_ps.size() == 0)
+	{
+		cout << "no open ports" << endl;
+		fingerprints.push_back("");
+		fingerprints.push_back("");
+		fingerprints.push_back("");
+		fingerprints.push_back("");
+	}
+	else {
+		tcpScan(ipaddr, tcp_open_ps[0],unports[i++], 2, 1024, 0x0000); //tcp packet flag=SYN
+		tcpReceive(ipaddr,1000);
+		fingerprints.push_back((char*)packetdata);
+		memset(packetdata, 0, 2000);
+
+		tcpScan(ipaddr, tcp_open_ps[0], unports[i++], 0, 128, 0x40); //empty packet ,DF set, window 128
+		tcpReceive(ipaddr,1000);
+		fingerprints.push_back((char*)packetdata);
+		memset(packetdata, 0, 2000);
+
+		tcpScan(ipaddr, tcp_open_ps[0], unports[i++], 0xab, 256, 0x0000);
+		tcpReceive(ipaddr,1000);
+		fingerprints.push_back((char*)packetdata);
+		memset(packetdata, 0, 2000);
+
+		tcpScan(ipaddr, tcp_open_ps[0], unports[i++], 0x10, 1024, 0x40);
+		tcpReceive(ipaddr,1000);
+		fingerprints.push_back((char*)packetdata);
+		memset(packetdata, 0, 2000);
+	}
+	
+	tcpScan(ipaddr, unports[0], unports[i++], 2, 31337, 0x0000);
+	tcpReceive(ipaddr, 1000);
+	fingerprints.push_back((char*)packetdata);
+	memset(packetdata, 0, 2000);
+
+	tcpScan(ipaddr, unports[0], unports[i++], 0x10, 32768, 0x40);
+	tcpReceive(ipaddr, 1000);
+	fingerprints.push_back((char*)packetdata);
+	memset(packetdata, 0, 2000);
+
+	tcpScan(ipaddr, unports[0], unports[i++], 0x29, 65535, 0x0000);
+	tcpReceive(ipaddr, 1000);
+	fingerprints.push_back((char*)packetdata);
+	memset(packetdata, 0, 2000);
+	
+	for (int j = 0; j < fingerprints.size(); j++)
+	{
+		cout << fingerprints[j] << endl;
+	}
+}
 
 int SendRaw::tcpScanpre(string ipaddr)
 {
@@ -133,7 +203,7 @@ int SendRaw::tcpScanpre(string ipaddr)
 	MacLocal = (char*)malloc(sizeof(MacLocal));
 	getlocalmacbyip(inet_addr(ipaddr.c_str()), MacLocal);
 }
-int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
+int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags, uint16_t win, uint16_t ipflag)
 {
 	//Ethernet
 	MacAddr = getMac(inet_addr(ipaddr.c_str()));
@@ -147,7 +217,7 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	iphdr.tos = 0x00;
 	iphdr.total_len = 0;
 	iphdr.ident = 0xcdbb;
-	iphdr.frag_and_flags = 0x00;
+	iphdr.frag_and_flags = ipflag;
 	iphdr.ttl = 0x38;
 	iphdr.proto = 0x06;
 	iphdr.checksum = 0x00;
@@ -155,7 +225,7 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	iphdr.desIP = inet_addr(ipaddr.c_str());
 	//TCP
 	TCPHDR tcphdr;
-	tcphdr.th_sport = htons(26666);
+	tcphdr.th_sport = htons(sport);
 	tcphdr.th_dport = htons(dport);
 	tcphdr.th_seq = rand();
 	tcphdr.th_ack = 0x00;
@@ -163,7 +233,6 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint8_t flags, uint16_t win)
 	tcphdr.th_flags = flags;
 	tcphdr.th_win = htons(win);
 	tcphdr.th_sum = 0x00;
-	tcphdr.th_win = 0x00;
 	tcphdr.th_urp = 0x00;
 	tcphdr.th_kind = 0x02;
 	tcphdr.th_len = 0x04;
@@ -204,9 +273,9 @@ int SendRaw::tcpScanPortList(string ipaddr, vector<uint16_t> &ports)
 	tcpScanpre(ipaddr);
 	for (int i = 0; i < ports.size(); i++)
 	{
-		tcpScan(ipaddr, ports[i], 2, 1024);
+		tcpScan(ipaddr, ports[i], 26666, 2, 1024, 0x00);
 	}
-	tcpReceive(ipaddr);
+	tcpReceive(ipaddr,14000);
 	return 0;
 }
 int SendRaw::setFilter(string ipaddr,char packet_filter[])
@@ -242,7 +311,7 @@ int SendRaw::setFilter(string ipaddr,char packet_filter[])
 	}
 	printf("\nlistening on %s...\n", d->description);
 
-	pcap_freealldevs(alldevs);
+	//pcap_freealldevs(alldevs);
 }
 
 int SendRaw::tcpScan2(string ipaddr,vector<uint16_t> &ports)
@@ -265,7 +334,7 @@ int SendRaw::tcpScan2(string ipaddr,vector<uint16_t> &ports)
 	return 0;
 }
 
-int SendRaw::tcpReceive(string ipaddr)
+int SendRaw::tcpReceive(string ipaddr, int timeout)
 {
 	string packet_filter = "tcp and src host ";
 	packet_filter = packet_filter + ipaddr;
@@ -275,7 +344,7 @@ int SendRaw::tcpReceive(string ipaddr)
 	threadData.timeout = 150000;
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
 	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
-	Sleep(14000); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
 	CloseHandle(thread2);
 	getTcpOpenPorts(tcp_open_ports);
@@ -291,6 +360,8 @@ int SendRaw::snmpScan(string ipaddr)
 	}
 	//Ethernet
 	MacAddr = getMac(inet_addr(ipaddr.c_str()));
+	if (MacAddr == NULL)
+		return -1;
 	memcpy(packet, MacAddr, 6);
 	MacLocal=(char *)malloc(sizeof(MacLocal));
 	getlocalmacbyip(inet_addr(ipaddr.c_str()),MacLocal);
@@ -395,6 +466,18 @@ int SendRaw::snmpScan(string ipaddr)
 	return 0;
 }
 
+int SendRaw::snmpGet(string ipaddr,int timeout)
+{
+	snmpScan(ipaddr);
+	char packet_filter[] = "udp dst port 60340";
+	setFilter(ipaddr, packet_filter);
+	THREAD_DATA threadData;
+	threadData.fp = fp;
+	HANDLE thread1 = CreateThread(NULL, 0, ThreadSnmp, &threadData, 0, NULL);
+	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null
+	CloseHandle(thread1);
+	return 0;
+}
 
 char* SendRaw::getMac(u_long ip)
 {
@@ -407,7 +490,7 @@ char* SendRaw::getMac(u_long ip)
 		char* bPhysAddr = (char*)MacArr;
 		return bPhysAddr;
 	}
-	return 0;
+	return NULL;
 }
 
 bool SendRaw::getlocalmac(char* sMac)
@@ -502,9 +585,9 @@ void SendRaw::getTcpOpenPorts(vector<int> &tcp_open_p)
 {
 	cout << "finished" << endl;
 	
-	tcp_open_ps.push_back(tcp_open_p[0]);
+	//tcp_open_ps.push_back(tcp_open_p[0]);
 	vector<int>::iterator it;
-	for (int i=1; i<tcp_open_p.size(); i++)
+	for (int i=0; i<tcp_open_p.size(); i++)
 	{
 		it = find(tcp_open_ps.begin(), tcp_open_ps.end(), tcp_open_p[i]);
 		if (it == tcp_open_ps.end())
@@ -514,5 +597,10 @@ void SendRaw::getTcpOpenPorts(vector<int> &tcp_open_p)
 	{
 		cout << tcp_open_ps[i] << "\topen" << endl;
 	}
+}
+
+void SendRaw::free_alldevs()
+{
+	pcap_freealldevs(alldevs);
 }
 

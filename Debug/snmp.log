@@ -1,17 +1,19 @@
 ﻿  main.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(108,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(116,9): warning C4101: “buff”: 未引用的局部变量
   snmp.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(108,9): warning C4101: “buff”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(44,7): warning C4101: “ip6str”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(205,20): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(507,17): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(513,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(116,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(52,7): warning C4101: “ip6str”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(137,11): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(189,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(274,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(590,17): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(596,20): warning C4018: “<”: 有符号/无符号不匹配
   正在生成代码...
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(135): warning C4715: “SendRaw::tcpScanpre”: 不是所有的控件路径都返回值
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(246): warning C4715: “SendRaw::setFilter”: 不是所有的控件路径都返回值
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(408): warning C4172: 返回局部变量或临时变量的地址: MacArr
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(205): warning C4715: “SendRaw::tcpScanpre”: 不是所有的控件路径都返回值
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(315): warning C4715: “SendRaw::setFilter”: 不是所有的控件路径都返回值
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(491): warning C4172: 返回局部变量或临时变量的地址: MacArr
   snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe

@@ -5,10 +5,11 @@ int main(int argc, char** argv)
 	SendRaw a;
 	string ipaddr;
 	cin >> ipaddr;
-	a.ifprint(a.IpfindIf(ipaddr));
+	//a.ifprint(a.IpfindIf(ipaddr));
 	//a.snmpScan(ipaddr);
 	//a.tcpScanPortList(ipaddr, ports);
-	a.snmpGet(ipaddr,2000);
+	SmpScan2(ipaddr,0);
+	//a.snmpGet(ipaddr,2000);
 	a.free_alldevs();
 	//a.tcpReceive(ipaddr);
 	//a.snmpReceive(ipaddr);

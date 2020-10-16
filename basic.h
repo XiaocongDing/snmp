@@ -12,6 +12,8 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <stdlib.h>
+#include <winsock2.h>
 using namespace std;
 
 #pragma comment(lib,"../lib/Packet.lib")

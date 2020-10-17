@@ -1,6 +1,26 @@
 ﻿  main.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(116,9): warning C4101: “buff”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(319,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(68,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(118,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(321,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(82,15): warning C4244: “=”: 从“double”转换到“unsigned long”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\scan.h(163,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(171,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(176,18): warning C4018: “<”: 有符号/无符号不匹配
+  scan.cpp
+C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“WIN32”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(68,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(118,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(321,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(82,15): warning C4244: “=”: 从“double”转换到“unsigned long”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\scan.h(163,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(171,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(176,18): warning C4018: “<”: 有符号/无符号不匹配
+  正在生成代码...
   snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe

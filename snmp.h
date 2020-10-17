@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SNMP
+#define SNMP
 #include "basic.h"
 
 
@@ -361,3 +363,4 @@ static int SmpScan2(string ipaddr,int flag139)
 	free(infobuf);
 	return 0;
 }
+#endif

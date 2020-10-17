@@ -14,6 +14,11 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <winsock2.h>
+#include <cstdlib>
+#include <cstring>
+#include <WinSock2.h>
+#include <regex>
+#include <atlstr.h>
 using namespace std;
 
 #pragma comment(lib,"../lib/Packet.lib")
@@ -58,6 +63,20 @@ typedef struct UDPHDR
 	u_short length;
 	u_short cksum;
 }UDP_HDR,*pUDP_HDR;
+
+static regex ipv4_regex("(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}");
+
+static void getTime(vector<string>& ScanResults)
+{
+	time_t nowTime = time(NULL);
+	struct tm* sysTime;
+	sysTime = (struct tm*)malloc(sizeof(tm));
+	localtime_s(sysTime, &nowTime);
+	char buff[50];
+	ScanResults.push_back("###\nStartTime\n$$$\n");
+	snprintf(buff, 50, "Year:%d Month:%d Day:%d Hours:%d Min:%d \n", sysTime->tm_year + 1900, sysTime->tm_mon, sysTime->tm_mday, sysTime->tm_hour, sysTime->tm_min);
+	ScanResults.push_back(buff);
+}
 
 static unsigned short checksum(unsigned short* addr, unsigned int count) {
 	register unsigned long sum = 0;
@@ -139,3 +158,14 @@ static void asciiFilter(u_char* buff,int size)
 	temp[j] = '\0';
 }
 
+static bool find_char(char* str, char t)
+{
+	char* p = str;
+	while (*p != '\0')
+	{
+		if (*p == t)
+			return true;
+		p++;
+	}
+	return false;
+}

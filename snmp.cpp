@@ -207,6 +207,8 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags
 {
 	//Ethernet
 	MacAddr = getMac(inet_addr(ipaddr.c_str()));
+	if (MacAddr == NULL)
+		return -1;
 	memcpy(packet, MacAddr, 6);
 	memcpy(packet + 6, MacLocal, 6);
 	packet[12] = 0x08;
@@ -465,6 +467,8 @@ int SendRaw::snmpScan(string ipaddr)
 	pcap_close(fp);
 	return 0;
 }
+
+
 
 int SendRaw::snmpGet(string ipaddr,int timeout)
 {

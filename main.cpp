@@ -4,16 +4,22 @@ int main(int argc, char** argv)
 {
 	SendRaw a;
 	string ipaddr;
-	//cin >> ipaddr;
-	//a.ifprint(a.IpfindIf(ipaddr));
-	//a.snmpScan(ipaddr);
-	//a.tcpScanPortList(ipaddr, ports);
-	//a.snmpGet(ipaddr,2000);
+	vector<string> results;
+	ofstream file("Result", ios::app);
+	
 	Scan b(1, 1, 1, 1, 1, 1,
 		1, 1, 1, 1, 100,
-		"192.168.1.1", "23,24,27#12,27,18,23");
-	b.printIpPorts();
+		"192.168.0.19/28", "23,24,27#12,27,18,23");
+	//b.printIpPorts();
+	b.Scan_Start();
+	results=b.getResult();
+	for (int i = 0; i < results.size(); i++)
+	{
+		file << results[i];
+	}
+	b.printAliveip();
 	a.free_alldevs();
+
 	//a.tcpReceive(ipaddr);
 	//a.snmpReceive(ipaddr);
 	

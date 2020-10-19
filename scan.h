@@ -18,6 +18,8 @@ private:
 	flag host_os_flag; // os_finger_print
 	flag route_os_flag; // snmp 
 	
+	bool aliveHostScaned;
+
 	int time_interval;
 	string input_ip_ranges;
 
@@ -28,9 +30,12 @@ private:
 
 	vector<unsigned long> aliveIP_icmp;
 	vector<unsigned long> aliveIP_arp;
+	vector<unsigned long> aliveIP;
 	
 	SendRaw raw;
-	vector<string> result;
+	vector<string> ScanResults;
+
+	
 public:
 	Scan()
 	{
@@ -78,11 +83,11 @@ public:
 				int mask;
 				unsigned long ip_a, ip_s, ip_e;
 
-				mask = (int)input_ip_ranges.substr(loc + 1, input_ip_ranges.size()).c_str();
-				ip_a = pow(2, (32 - mask));
-				ip_s = inet_addr(ipaddr.c_str()) / ip_a;
+				mask = (int)stoi(input_ip_ranges.substr(loc + 1, input_ip_ranges.size()-loc-1));
+				ip_a = (unsigned long)pow(2, (32 - mask));
+				ip_s = (swap_endian(inet_addr(ipaddr.c_str())) / ip_a) * ip_a;
 				ip_e = ip_s + ip_a - 1;
-				ipranges.push_back(make_pair(ip_s, ip_e));
+				ipranges.push_back(make_pair(swap_endian(ip_s), swap_endian(ip_e)));
 			}
 			else {
 				unsigned long ip_s;
@@ -101,21 +106,21 @@ public:
 			unsigned long ip_s, ip_e;
 			while (input_ip_ranges.find(",",loc_a)!=input_ip_ranges.npos)
 			{
-				loc_b = input_ip_ranges.find(",", 0);
-				subtemp = input_ip_ranges.substr(loc_a, loc_b);
-				loc = subtemp.find("-", loc_a);
-				ipaddr1 = input_ip_ranges.substr(loc_a, loc);
-				ipaddr2 = input_ip_ranges.substr(loc + 1, loc_b);
+				loc_b = input_ip_ranges.find(",", loc_a);
+				subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
+				loc = subtemp.find("-", 0);
+				ipaddr1 = subtemp.substr(0, loc);
+				ipaddr2 = subtemp.substr(loc + 1, subtemp.size() - loc - 1);
 				ip_s = inet_addr(ipaddr1.c_str());
 				ip_e = inet_addr(ipaddr2.c_str());
 				ipranges.push_back(make_pair(ip_s, ip_e));
 				loc_a = loc_b + 1;
 			}
 			loc_b = input_ip_ranges.size();
-			subtemp = input_ip_ranges.substr(loc_a, loc_b);
-			loc = subtemp.find("-", loc_a);
-			ipaddr1 = input_ip_ranges.substr(loc_a, loc);
-			ipaddr2 = input_ip_ranges.substr(loc + 1, loc_b);
+			subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
+			loc = subtemp.find("-", 0);
+			ipaddr1 = subtemp.substr(0, loc);
+			ipaddr2 = subtemp.substr(loc + 1, subtemp.size() - loc - 1);
 			ip_s = inet_addr(ipaddr1.c_str());
 			ip_e = inet_addr(ipaddr2.c_str());
 			ipranges.push_back(make_pair(ip_s, ip_e));
@@ -153,6 +158,35 @@ public:
 		port = scanPorts.substr(loc_a, loc_b - loc_a);
 		udp_scan_ports.push_back((uint16_t)stoi(port));
 	}
+	void mergeAliveip()
+	{
+		aliveHostScaned = true;
+		if (icmp_flag && arp_flag)
+		{
+			if (aliveIP_icmp.size() == 0 || aliveIP_arp.size() == 0)
+				return;
+			merge(aliveIP_icmp.begin(), aliveIP_icmp.end(), aliveIP_arp.begin(), aliveIP_arp.end(), back_inserter(aliveIP));
+			aliveIP.erase(unique(aliveIP.begin(), aliveIP.end()), aliveIP.end());
+		}
+		else if (icmp_flag)
+		{
+			if (aliveIP_icmp.size() == 0)
+				return;
+			aliveIP = aliveIP_icmp;
+		}
+		else if (arp_flag)
+		{
+			if (aliveIP_arp.size() == 0)
+				return;
+			aliveIP = aliveIP_arp;
+		}
+		else
+		{
+			aliveHostScaned = false;
+			return;
+		}
+		
+	}
 	void printIpPorts()
 	{
 		int i;
@@ -174,5 +208,31 @@ public:
 			cout << tcp_scan_ports[i] << endl;
 		}
 	}
+	void printAliveip() {
+		int i = 0;
+		in_addr mAddr;
+		cout << "ICMP alive ip:" << endl;
+		for ( i = 0; i < aliveIP_icmp.size(); i++)
+		{
+			mAddr.S_un.S_addr = aliveIP_icmp[i];
+			cout << inet_ntoa(mAddr) << endl;
+		}
+		cout << "ARP alive ip:" << endl;
+		for ( i = 0; i < aliveIP_arp.size(); i++)
+		{
+			mAddr.S_un.S_addr = aliveIP_arp[i];
+			cout << inet_ntoa(mAddr) << endl;
+		}
+		cout << "merged alive ip:" << endl;
+		for ( i = 0; i < aliveIP.size(); i++)
+		{
+			mAddr.S_un.S_addr = aliveIP[i];
+			cout << inet_ntoa(mAddr) << endl;
+		}
+	}
 	void Scan_Start();
+	vector<string> getResult()
+	{
+		return ScanResults;
+	}
 };

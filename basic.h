@@ -74,7 +74,7 @@ static void getTime(vector<string>& ScanResults)
 	localtime_s(sysTime, &nowTime);
 	char buff[50];
 	ScanResults.push_back("###\nStartTime\n$$$\n");
-	snprintf(buff, 50, "Year:%d Month:%d Day:%d Hours:%d Min:%d \n", sysTime->tm_year + 1900, sysTime->tm_mon, sysTime->tm_mday, sysTime->tm_hour, sysTime->tm_min);
+	snprintf(buff, 50, "Year:%d Month:%d Day:%d Hours:%d Min:%d \n", sysTime->tm_year + 1900, sysTime->tm_mon+1, sysTime->tm_mday, sysTime->tm_hour, sysTime->tm_min);
 	ScanResults.push_back(buff);
 }
 

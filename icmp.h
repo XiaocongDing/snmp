@@ -25,6 +25,8 @@ static void InitializeWinsock() {
 	}
 }
 
+static vector<unsigned long> tracertIP;
+
 static void InitIcmpHeader(ICMP_HDR* icmp_hdr) {
 	char buff[sizeof(ICMP_HDR) + 32];
 	icmp_hdr->icmp_type = ICMP_ECHO_REQUEST_TYPE;
@@ -328,6 +330,14 @@ static void traceroute(unsigned long starthost, unsigned long endhost, vector<st
 		fclose(p);
 		WinExec("cmd /c del log", SW_HIDE);
 
+		if (stackIP.size() > 2)
+		{
+			for (int k = 1; k < stackIP.size() - 1; k++)
+			{
+				tracertIP.push_back(inet_addr(stackIP[i].c_str()));
+			}
+		}
+
 		while (stackIP.size())
 		{
 			traRoute.push_back(stackIP.back());
@@ -353,6 +363,7 @@ static void traceroute(unsigned long starthost, unsigned long endhost, vector<st
 			traRoute.pop_back();
 		}
 		ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
+		traRoute.clear();
 	}
 }
 
@@ -401,6 +412,14 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 		fclose(p);
 		WinExec("cmd /c del log", SW_HIDE);
 
+		if (stackIP.size() > 2)
+		{
+			for (int k = 1; k < stackIP.size()-1; k++)
+			{
+				tracertIP.push_back(inet_addr(stackIP[i].c_str()));
+			}
+		}
+		
 		while (stackIP.size())
 		{
 			traRoute.push_back(stackIP.back());
@@ -426,6 +445,7 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 			traRoute.pop_back();
 		}
 		ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
+		traRoute.clear();
 	}
 	
 }

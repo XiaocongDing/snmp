@@ -57,6 +57,7 @@ public:
 	char* iptos(u_long in);
 	void ifprint(pcap_if_t* d);
 	int snmpScan(string ipaddr);
+	
 	int tcpScanpre(string ipaddr);
 	int tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags, uint16_t win,uint16_t ipflag);
 	int tcpScanPortList(string ipaddr, vector<uint16_t>& ports);
@@ -72,8 +73,10 @@ public:
 	void get_fp(pcap_t* p);
 	void OS_fp_get(string ipaddr);
 	void free_alldevs();
+	int snmp_Segment_Scan(vector<unsigned long> ipaddr,vector<string>&ScanResults);
+	int snmpGet(string ipaddr, int timeout,vector<string> &ScanResults);
 
-	int snmpGet(string ipaddr, int timeout);
+	int tcp_Segment_Scan(vector<unsigned long>aliveIP, vector<uint16_t>portlist, vector<string>& ScanResults);
 	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
 };
 
@@ -99,16 +102,11 @@ static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header,
 	p = (u_char*)((u_char*)uh + 53);
 	memcpy(buff, p, header->len - (67 + ip_len));
 
-	sport = ntohs(uh->src_port);
-	dport = ntohs(uh->des_port);
-
-	mAddr_src.S_un.S_addr = ih->srcIP;
-	mAddr_des.S_un.S_addr = ih->desIP;
-
-	cout << inet_ntoa(mAddr_src) << "  " << sport << "     ";
-	cout << inet_ntoa(mAddr_des) << "  " << dport << "     ";
-	asciiFilter(buff, header->len - (67 + ip_len));
-	cout << buff << endl;
+	int len;
+	len = asciiFilter(buff, header->len - (67 + ip_len));
+	memcpy(packetdata, buff, len);
+	cout << packetdata << endl;
+	packetdata[len] = '\0';
 }
 
 

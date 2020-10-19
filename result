@@ -562,3 +562,43 @@ Traceroute IP:192.168.0.19
 @#@
 Traceroute IP:192.168.0.20
 192.168.0.19	192.168.0.16
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:19 Hours:20 Min:0 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.0.16	alive	0ms	Windows	128	
+192.168.0.17	unknow
+192.168.0.18	unknow
+192.168.0.19	alive	0ms	Windows	128	
+192.168.0.20	alive	0ms	Windows	128	
+192.168.0.21	unknow
+192.168.0.22	unknow
+192.168.0.23	unknow
+192.168.0.24	unknow
+192.168.0.25	unknow
+192.168.0.26	unknow
+192.168.0.27	unknow
+192.168.0.28	unknow
+192.168.0.29	unknow
+192.168.0.30	unknow
+192.168.0.31	unknow
+###
+function45=traceRoute
+$$$
+@#@
+Traceroute IP:192.168.0.16
+192.168.0.19	192.168.0.16
+@#@
+Traceroute IP:192.168.0.19
+192.168.0.19	192.168.0.16
+@#@
+Traceroute IP:192.168.0.20
+192.168.0.19	192.168.0.16
+###
+function46=SNMPScan
+$$$
+No routers found

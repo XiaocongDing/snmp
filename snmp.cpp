@@ -311,7 +311,6 @@ int SendRaw::setFilter(string ipaddr,char packet_filter[])
 		pcap_freealldevs(alldevs);
 		return -1;
 	}
-	printf("\nlistening on %s...\n", d->description);
 
 	//pcap_freealldevs(alldevs);
 }
@@ -468,9 +467,24 @@ int SendRaw::snmpScan(string ipaddr)
 	return 0;
 }
 
+int SendRaw::snmp_Segment_Scan(vector<unsigned long> ipaddr, vector<string>& ScanResults)
+{
+	in_addr mAddr;
+	ScanResults.push_back("###\nfunction46=SNMPScan\n$$$\n");
+	for (int i = 0; i < ipaddr.size(); i++)
+	{
+		mAddr.S_un.S_addr = ipaddr[i];
+		snmpGet(inet_ntoa(mAddr), 1000, ScanResults);
+	}
+	return 0;
+}
 
+int SendRaw::tcp_Segment_Scan(vector<unsigned long>aliveIP, vector<uint16_t>portlist, vector<string>& ScanResults)
+{
+	return 0;
+}
 
-int SendRaw::snmpGet(string ipaddr,int timeout)
+int SendRaw::snmpGet(string ipaddr,int timeout,vector<string> &ScanResults)
 {
 	snmpScan(ipaddr);
 	char packet_filter[] = "udp dst port 60340";
@@ -480,6 +494,7 @@ int SendRaw::snmpGet(string ipaddr,int timeout)
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadSnmp, &threadData, 0, NULL);
 	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null
 	CloseHandle(thread1);
+	ScanResults.push_back(ipaddr + "\t\t" + (char*)packetdata);
 	return 0;
 }
 

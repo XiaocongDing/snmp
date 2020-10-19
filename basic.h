@@ -143,7 +143,7 @@ static uint16_t ip_checksum(uint16_t initcksum, uint8_t* ptr, int len)
 	return cksum;
 }
 
-static void asciiFilter(u_char* buff,int size)
+static int asciiFilter(u_char* buff,int size)
 {
 	u_char* temp = buff;
 	
@@ -156,6 +156,7 @@ static void asciiFilter(u_char* buff,int size)
 		}
 	}
 	temp[j] = '\0';
+	return j;
 }
 
 static bool find_char(char* str, char t)

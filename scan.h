@@ -32,6 +32,8 @@ private:
 	vector<unsigned long> aliveIP_arp;
 	vector<unsigned long> aliveIP;
 	
+	
+
 	SendRaw raw;
 	vector<string> ScanResults;
 

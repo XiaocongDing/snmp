@@ -1,20 +1,58 @@
-﻿  snmp.cpp
+﻿  main.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(95,10): warning C4101: “mAddr_des”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(95,20): warning C4101: “mAddr_src”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,10): warning C4101: “sport”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,17): warning C4101: “dport”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(116,9): warning C4101: “buff”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.h(319,27): warning C4101: “i”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(52,7): warning C4101: “ip6str”: 未引用的局部变量
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(137,11): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(189,20): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(276,20): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(474,20): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(609,17): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(615,20): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(205): warning C4715: “SendRaw::tcpScanpre”: 不是所有的控件路径都返回值
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(316): warning C4715: “SendRaw::setFilter”: 不是所有的控件路径都返回值
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(510): warning C4172: 返回局部变量或临时变量的地址: MacArr
+C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(72,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(152,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(161,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,14): warning C4101: “tick”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,20): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(235,10): warning C4101: “wsa”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(311,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(347,22): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,20): warning C4101: “mAddr_src”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(93,10): warning C4101: “sport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(93,17): warning C4101: “dport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(115,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(318,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(195,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(204,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(209,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(218,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(224,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(230,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\main.cpp(19,20): warning C4018: “<”: 有符号/无符号不匹配
+  scan.cpp
+C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“WIN32”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(72,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(152,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(161,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,14): warning C4101: “tick”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,20): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(235,10): warning C4101: “wsa”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(311,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(347,22): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(94,20): warning C4101: “mAddr_src”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(93,10): warning C4101: “sport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(93,17): warning C4101: “dport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(115,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(318,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(195,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(204,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(209,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(218,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(224,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(230,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(10,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(31,19): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(48,19): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(74,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(76,52): warning C4018: “<”: 有符号/无符号不匹配
+  正在生成代码...
   snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Debug\snmp.exe

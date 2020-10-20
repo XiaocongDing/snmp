@@ -3,7 +3,7 @@
 #include "tcp.h"
 #include "icmp.h"
 #include "snmp.h"
-typedef int flag;
+typedef bool flag;
 
 class Scan {
 private:
@@ -165,7 +165,7 @@ public:
 		aliveHostScaned = true;
 		if (icmp_flag && arp_flag)
 		{
-			if (aliveIP_icmp.size() == 0 || aliveIP_arp.size() == 0)
+			if (aliveIP_icmp.size() == 0 && aliveIP_arp.size() == 0)
 				return;
 			merge(aliveIP_icmp.begin(), aliveIP_icmp.end(), aliveIP_arp.begin(), aliveIP_arp.end(), back_inserter(aliveIP));
 			aliveIP.erase(unique(aliveIP.begin(), aliveIP.end()), aliveIP.end());
@@ -200,11 +200,12 @@ public:
 			cout << inet_ntoa(mAddr1) << "      ";
 			cout << inet_ntoa(mAddr2) << endl;
 		}
+		cout << "udp Scan port:" << endl;
 		for ( i = 0; i < udp_scan_ports.size(); i++)
 		{
 			cout << udp_scan_ports[i] << endl;
 		}
-		cout << endl;
+		cout << "tcp Scan port:" << endl;
 		for ( i = 0; i < tcp_scan_ports.size(); i++)
 		{
 			cout << tcp_scan_ports[i] << endl;

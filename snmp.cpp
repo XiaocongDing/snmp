@@ -131,8 +131,8 @@ char * SendRaw::iptos(u_long in)
 //pre
 void SendRaw::OS_fp_get(string ipaddr)
 {
-	vector<int> unports = { 23332,23334,23335,34523,12232,24322,23421,23412,19731 };
-	vector<int>::iterator it;
+	vector<uint16_t> unports = { 23332,23334,23335,34523,12232,24322,23421,23412,19731 };
+	vector<uint16_t>::iterator it;
 	int i = 0;
 	for (; i < unports.size(); i++)
 	{
@@ -337,18 +337,17 @@ int SendRaw::tcpScan2(string ipaddr,vector<uint16_t> &ports)
 
 int SendRaw::tcpReceive(string ipaddr, int timeout)
 {
-	string packet_filter = "tcp and src host ";
+	string packet_filter = "tcp dst port 26666 and src host ";
 	packet_filter = packet_filter + ipaddr;
 	setFilter(ipaddr, (char*)packet_filter.c_str());
 	THREAD_DATA threadData;
 	threadData.fp = fp;
 	threadData.timeout = 150000;
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
-	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
 	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
-	CloseHandle(thread2);
 	getTcpOpenPorts(tcp_open_ports);
+	tcp_open_ports.clear();
 	return 0;
 }
 int SendRaw::snmpScan(string ipaddr)
@@ -479,11 +478,6 @@ int SendRaw::snmp_Segment_Scan(vector<unsigned long> ipaddr, vector<string>& Sca
 	return 0;
 }
 
-int SendRaw::tcp_Segment_Scan(vector<unsigned long>aliveIP, vector<uint16_t>portlist, vector<string>& ScanResults)
-{
-	return 0;
-}
-
 int SendRaw::snmpGet(string ipaddr,int timeout,vector<string> &ScanResults)
 {
 	snmpScan(ipaddr);
@@ -600,12 +594,12 @@ int SendRaw::snmpReceive(string ipaddr)
 	return 0;
 }
 
-void SendRaw::getTcpOpenPorts(vector<int> &tcp_open_p)
+void SendRaw::getTcpOpenPorts(vector<uint16_t> &tcp_open_p)
 {
 	cout << "finished" << endl;
 	
 	//tcp_open_ps.push_back(tcp_open_p[0]);
-	vector<int>::iterator it;
+	vector<uint16_t>::iterator it;
 	for (int i=0; i<tcp_open_p.size(); i++)
 	{
 		it = find(tcp_open_ps.begin(), tcp_open_ps.end(), tcp_open_p[i]);
@@ -622,4 +616,76 @@ void SendRaw::free_alldevs()
 {
 	pcap_freealldevs(alldevs);
 }
+void SendRaw::tcp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults)
+{
+	in_addr mAddr;
+	ScanResults.push_back("###\nfunction46=TCPScan\n$$$\nTcp ports status and banner scan...\n");
+	for (int i = 0; i < inputIP.size(); i++)
+	{
+		mAddr.S_un.S_addr = inputIP[i];
+		char buff[100];
+		snprintf(buff, 100, "TCP Scanning IP: %s\n", inet_ntoa(mAddr));
+		ScanResults.push_back(buff);
+		tcpScanPortList(inet_ntoa(mAddr), portlist);
+		tcpScan_socket(inputIP[i], tcp_open_ps, ScanResults);
+		tcp_open_ps.clear();
+	}
+}
 
+void SendRaw::tcpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist,vector<string>& ScanResults)
+{
+	SOCKET mysocket = INVALID_SOCKET;
+	sockaddr_in my_addr;
+	timeval tv = { 1000 ,0 };
+	int opt = 5;
+	int status,ret;
+	WSADATA wsa;
+	if (status = WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		exit(EXIT_FAILURE);
+	}
+	int cnt = 0;
+	while (cnt < portlist.size())
+	{
+		if ((mysocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
+		{
+			perror("socket:");
+			continue;
+		}
+		setsockopt(mysocket, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(timeval));
+		setsockopt(mysocket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
+		if ((setsockopt(mysocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval))) < -1)
+			return;
+		my_addr.sin_family = AF_INET;
+		my_addr.sin_addr.s_addr = ipaddr;
+		my_addr.sin_port = htons(portlist[cnt]);
+		ret = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+		char buff[200];
+		if (ret == -1)
+		{
+			if (WSAGetLastError() == 10061)
+			{
+				snprintf(buff, 20, "%d\tclosed\n", portlist[cnt]);
+				ScanResults.push_back(buff);
+			}
+		}
+		else
+		{
+			snprintf(buff, 20, "%d\topen\t", portlist[cnt]);
+			ScanResults.push_back(buff);
+			memset(buff, 0, 200);
+			if (recv(mysocket, buff, 200, 0) == SOCKET_ERROR)
+			{
+				if (WSAGetLastError() == WSAETIMEDOUT)
+				{
+					ScanResults.push_back("banner unknown\n");
+				}
+			}
+			else {
+				ScanResults.push_back( (char)buff + "\n");
+			}
+		}
+		cnt++;
+		closesocket(mysocket);
+	}
+	return;
+}

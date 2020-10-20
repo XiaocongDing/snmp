@@ -42,7 +42,7 @@ private:
 	char errbuf[PCAP_ERRBUF_SIZE];
 	u_char packet[200];
 
-	vector<int> tcp_open_ps;
+	vector<uint16_t> tcp_open_ps;
 	vector<string> fingerprints;
 
 public:
@@ -67,21 +67,22 @@ public:
 	int snmpReceive(string ipaddr);
 	int tcpReceive(string ipaddr, int timeout);
 	int setFilter(string ipaddr, char packet_filter[]);
-	void getTcpOpenPorts(vector<int> &tcp_open_p);
-
+	void getTcpOpenPorts(vector<uint16_t> &tcp_open_p);
 	int tcpScan2(string ipaddr, vector<uint16_t> &ports);
 	void get_fp(pcap_t* p);
 	void OS_fp_get(string ipaddr);
 	void free_alldevs();
 	int snmp_Segment_Scan(vector<unsigned long> ipaddr,vector<string>&ScanResults);
 	int snmpGet(string ipaddr, int timeout,vector<string> &ScanResults);
-
-	int tcp_Segment_Scan(vector<unsigned long>aliveIP, vector<uint16_t>portlist, vector<string>& ScanResults);
+	void tcpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist, vector<string>& ScanResults);
+	void tcp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults); 
 	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
+
+	void udp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults);
 };
 
 
-static vector<int> tcp_open_ports;
+static vector<uint16_t> tcp_open_ports;
 static u_char packetdata[2000];
 
 static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)

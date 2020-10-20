@@ -37,6 +37,8 @@ static void InitIcmpHeader(ICMP_HDR* icmp_hdr) {
 	icmp_hdr->icmp_timestamp = GetTickCount();
 	memset(&buff[sizeof(ICMP_HDR)], 'E', 32);
 }
+static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResults);
+static void traceroute(unsigned long starthost, unsigned long endhost, vector<string>& ScanResults);
 
 static void icmp_Segment_Scan(unsigned long starthost, unsigned long endhost, vector<string> &ScanResults,vector<unsigned long>&aliveIp)
 {
@@ -287,84 +289,12 @@ static string getLocalipbyremote(const char* remote)
 
 static void traceroute(unsigned long starthost, unsigned long endhost, vector<string>& ScanResults)
 {
-	ScanResults.push_back("###\nfunction45=traceRoute\n$$$\n");
-	char temp[100];
-	in_addr mAddr;
-	string IP;
-	string cmd = "cmd /c tracert";
-	FILE* p;
-	vector<string> stackIP, traRoute;
-	cmatch m;
-
-	for (unsigned long i = starthost; i <= endhost; i++)
+	vector<unsigned long>aliveIP;
+	for (unsigned long i = swap_endian(starthost); i < swap_endian(endhost); i++)
 	{
-		mAddr.S_un.S_addr = i;
-		IP = inet_ntoa(mAddr);
-		cmd = cmd + IP + " > log";
-
-		CString strPara;
-		strPara = cmd.c_str();
-		STARTUPINFO si = { sizeof(si) };
-		PROCESS_INFORMATION pi;
-
-		bool fRet = CreateProcess(NULL, strPara.GetBuffer(), NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
-		if (fRet)
-		{
-			WaitForSingleObject(pi.hThread, INFINITE);
-			CloseHandle(pi.hThread);
-			CloseHandle(pi.hProcess);
-		}
-
-		p = fopen("log", "rt");
-
-		ScanResults.push_back("@#@\nTraceroute IP:" + IP + "\n");
-
-		while (!feof(p))
-		{
-			fgets(temp, 100, p);
-			regex_search(temp, m, ipv4_regex);
-			if (m.size() == 4)
-				stackIP.push_back(m[0]);
-		}
-
-		fclose(p);
-		WinExec("cmd /c del log", SW_HIDE);
-
-		if (stackIP.size() > 2)
-		{
-			for (int k = 1; k < stackIP.size() - 1; k++)
-			{
-				tracertIP.push_back(inet_addr(stackIP[i].c_str()));
-			}
-		}
-
-		while (stackIP.size())
-		{
-			traRoute.push_back(stackIP.back());
-			stackIP.pop_back();
-		}
-
-		string temp;
-		string des;
-		vector<pair<string, string>> result;
-		temp = getLocalipbyremote(traRoute.back().c_str());
-		if (!temp.compare("localhost"))
-		{
-			return;
-		}
-		des = traRoute.back();
-		traRoute.pop_back();
-
-		while (des.compare(traRoute.back()))
-		{
-			result.push_back(pair<string, string>(temp, traRoute.back()));
-			ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
-			temp = traRoute.back();
-			traRoute.pop_back();
-		}
-		ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
-		traRoute.clear();
+		aliveIP.push_back(swap_endian(aliveIP[i]));
 	}
+	traceroute(aliveIP, ScanResults);
 }
 
 static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResults)
@@ -382,6 +312,7 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 	{
 		mAddr.S_un.S_addr = aliveIP[i];
 		IP = inet_ntoa(mAddr);
+		
 		cmd = cmd + IP + " > log";
 		
 		CString strPara;
@@ -400,7 +331,7 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 		p = fopen("log", "rt");
 
 		ScanResults.push_back("@#@\nTraceroute IP:" + IP + "\n");
-
+		
 		while (!feof(p))
 		{
 			fgets(temp, 100, p);
@@ -408,10 +339,9 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 			if (m.size() == 4)
 				stackIP.push_back(m[0]);
 		}
-
+		memset(temp, 0, 100);
 		fclose(p);
 		WinExec("cmd /c del log", SW_HIDE);
-
 		if (stackIP.size() > 2)
 		{
 			for (int k = 1; k < stackIP.size()-1; k++)
@@ -422,15 +352,16 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 		
 		while (stackIP.size())
 		{
+			cout << stackIP.back() << endl;
 			traRoute.push_back(stackIP.back());
 			stackIP.pop_back();
 		}
 		
-		string temp;
+		string tmp;
 		string des;
 		vector<pair<string, string>> result;
-		temp = getLocalipbyremote(traRoute.back().c_str());
-		if (!temp.compare("localhost"))
+		tmp = getLocalipbyremote(traRoute.back().c_str());
+		if (!tmp.compare("localhost"))
 		{
 			return;
 		}
@@ -439,13 +370,15 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 
 		while (des.compare(traRoute.back()))
 		{
-			result.push_back(pair<string, string>(temp, traRoute.back()));
-			ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
-			temp = traRoute.back();
+			result.push_back(pair<string, string>(tmp, traRoute.back()));
+			ScanResults.push_back(tmp + "\t" + traRoute.back() + "\n");
+			tmp = traRoute.back();
 			traRoute.pop_back();
 		}
-		ScanResults.push_back(temp + "\t" + traRoute.back() + "\n");
+		ScanResults.push_back(tmp + "\t" + traRoute.back() + "\n");
 		traRoute.clear();
+		stackIP.clear();
+		cmd = "cmd /c tracert ";
 	}
 	
 }

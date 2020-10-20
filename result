@@ -1035,3 +1035,263 @@ function48=UDPScan
 $$$
 Udp ports status scan...
 UDP Scanning IP: 192.168.180.132
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:13 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	0ms	Windows	128	
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.180.132
+cp and src host ost tcp dst port 26666 and src host d.%d.%d.%d.%d.%d.%d%d.%d.%d.%d%d.%d.%d###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:19 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	16ms	Windows	128	
+###
+function47=TCPScan
+$$$
+Tcp ports status and banner scan...
+TCP Scanning IP: 192.168.180.132
+135	open	banner unknown
+139	open	banner unknown
+445	open	banner unknown
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:20 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.0.16	alive	0ms	Windows	128	
+192.168.0.17	unknow
+192.168.0.18	unknow
+192.168.0.19	alive	0ms	Windows	128	
+192.168.0.20	alive	0ms	Windows	128	
+192.168.0.21	unknow
+192.168.0.22	unknow
+192.168.0.23	unknow
+192.168.0.24	unknow
+192.168.0.25	unknow
+192.168.0.26	unknow
+192.168.0.27	unknow
+192.168.0.28	unknow
+192.168.0.29	unknow
+192.168.0.30	unknow
+192.168.0.31	unknow
+###
+function47=TCPScan
+$$$
+Tcp ports status and banner scan...
+TCP Scanning IP: 192.168.0.16
+135	open	banner unknown
+139	open	banner unknown
+445	open	banner unknown
+5357	open	banner unknown
+8080	open	TCP Scanning IP: 192.168.0.19
+135	open	banner unknown
+139	open	banner unknown
+445	open	banner unknown
+5357	closed
+8080	closed
+TCP Scanning IP: 192.168.0.20
+135	open	banner unknown
+139	open	banner unknown
+443	open	banner unknown
+445	open	banner unknown
+902	open	912	open	1080	open	5357	open	banner unknown
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:24 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.0.16	alive	0ms	Windows	128	
+192.168.0.17	unknow
+192.168.0.18	unknow
+192.168.0.19	alive	0ms	Windows	128	
+192.168.0.20	alive	0ms	Windows	128	
+192.168.0.21	unknow
+192.168.0.22	unknow
+192.168.0.23	unknow
+192.168.0.24	unknow
+192.168.0.25	unknow
+192.168.0.26	unknow
+192.168.0.27	unknow
+192.168.0.28	unknow
+192.168.0.29	unknow
+192.168.0.30	unknow
+192.168.0.31	unknow
+###
+function47=TCPScan
+$$$
+Tcp ports status and banner scan...
+TCP Scanning IP: 192.168.0.16
+135	open	banner unknown
+139	open	banner unknown
+445	open	banner unknown
+5357	open	banner unknown
+8080	open	
+TCP Scanning IP: 192.168.0.19
+139	open	banner unknown
+445	open	banner unknown
+5357	closed
+8080	closed
+135	open	banner unknown
+TCP Scanning IP: 192.168.0.20
+135	open	banner unknown
+139	open	banner unknown
+445	open	banner unknown
+443	open	banner unknown
+902	open	220 VMware Authentication Daemon Version 1.10: SSL Required, ServerDaemonProtocol:SOAP, MKSDisplayProtocol:VNC , , NFCSSL supported/t
+
+912	open	220 VMware Authentication Daemon Version 1.0, ServerDaemonProtocol:SOAP, MKSDisplayProtocol:VNC , , 
+
+1080	open	
+5357	open	banner unknown
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:31 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	0ms	Windows	128	
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.180.132
+31	unknown
+41	unknown
+53	unknown
+67	unknown
+68	unknown
+135	unknown
+137	unknown
+138	unknown
+139	unknown
+146	unknown
+161	unknown
+162	unknown
+445	unknown
+500	unknown
+666	unknown
+4000	unknown
+1900	unknown
+4500	unknown
+5050	unknown
+5353	unknown
+5355	unknown
+8099	unknown
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:20 Min:36 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.0.16	alive	0ms	Windows	128	
+192.168.0.17	unknow
+192.168.0.18	unknow
+192.168.0.19	alive	0ms	Windows	128	
+192.168.0.20	alive	0ms	Windows	128	
+192.168.0.21	unknow
+192.168.0.22	unknow
+192.168.0.23	unknow
+192.168.0.24	unknow
+192.168.0.25	unknow
+192.168.0.26	unknow
+192.168.0.27	unknow
+192.168.0.28	unknow
+192.168.0.29	unknow
+192.168.0.30	unknow
+192.168.0.31	unknow
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.0.16
+31	unknown
+41	unknown
+53	unknown
+67	unknown
+68	unknown
+135	unknown
+137	unknown
+138	unknown
+139	unknown
+146	unknown
+161	unknown
+162	unknown
+445	unknown
+500	unknown
+666	unknown
+4000	unknown
+1900	unknown
+4500	unknown
+5050	unknown
+5353	unknown
+5355	unknown
+8099	unknown
+UDP Scanning IP: 192.168.0.19
+31	unknown
+41	unknown
+53	unknown
+67	unknown
+68	unknown
+135	unknown
+137	unknown
+138	unknown
+139	unknown
+146	unknown
+161	unknown
+162	unknown
+445	unknown
+500	unknown
+666	unknown
+4000	unknown
+1900	unknown
+4500	unknown
+5050	unknown
+5353	unknown
+5355	unknown
+8099	unknown
+UDP Scanning IP: 192.168.0.20
+31	unknown
+41	unknown
+53	unknown
+67	unknown
+68	unknown
+135	unknown
+137	unknown
+138	unknown
+139	unknown
+146	unknown
+161	unknown
+162	unknown
+445	unknown
+500	unknown
+666	unknown
+4000	unknown
+1900	unknown
+4500	unknown
+5050	unknown
+5353	unknown
+5355	unknown
+8099	unknown

@@ -83,6 +83,7 @@ void Scan::Scan_Start()
 			raw.tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
 		}
 	}
+	//udp_flag = false;
 	if (udp_flag)
 	{
 		if (aliveHostScaned)

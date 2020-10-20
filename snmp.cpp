@@ -291,13 +291,15 @@ void SendRaw::udp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>&p
 		char buff[100];
 		snprintf(buff, 100, "UDP Scanning IP: %s\n", inet_ntoa(mAddr));
 		ScanResults.push_back(buff);
+		udp_to_scan_ports = portlist;
 		udpScanPortList(inet_ntoa(mAddr), portlist);
 		//udpScan_socket(inputIP[i], udp_open_ps, ScanResults);
 		ScanResults.push_back(udp_temp_results);
 		udp_temp_results.clear();
 		for (int j = 0; j < udp_to_scan_ports.size(); j++)
 		{
-			ScanResults.push_back((char)udp_to_scan_ports[j] + "\tunknown\n");
+			snprintf(buff, 100, "%d\tunknown\n", udp_to_scan_ports[j]);
+			ScanResults.push_back(buff);
 		}
 		udp_to_scan_ports.clear();
 	}
@@ -371,8 +373,7 @@ void SendRaw::udpReceive(string ipaddr, int timeout)
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
 	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
-	getUdpOpenPorts(udp_to_scan_ports);
-	udp_to_scan_ports.clear();
+	//getUdpOpenPorts(udp_to_scan_ports);
 }
 
 int SendRaw::tcpScanPortList(string ipaddr, vector<uint16_t> &ports)
@@ -718,7 +719,7 @@ void SendRaw::getUdpOpenPorts(vector<uint16_t>& udp_open_p)
 	vector<uint16_t>::iterator it;
 	for (int i = 0; i < udp_open_p.size(); i++)
 	{
-		it = find(udp_open_ps.begin(), udp_open_ps.end(), udp_open_ps[i]);
+		it = find(udp_open_p.begin(), udp_open_p.end(), udp_open_ps[i]);
 		if (it == udp_open_ps.end())
 			udp_open_ps.push_back(udp_open_ps[i]);
 	}
@@ -798,7 +799,9 @@ void SendRaw::tcpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist,vect
 				}
 			}
 			else {
-				ScanResults.push_back( (char)buff + "\n");
+				char bf[200];
+				snprintf(bf, 200, "%s\n", buff);
+				ScanResults.push_back(bf);
 			}
 		}
 		cnt++;

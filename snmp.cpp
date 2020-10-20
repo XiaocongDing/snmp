@@ -18,9 +18,7 @@ DWORD WINAPI ThreadProc1(LPVOID lp)
 DWORD WINAPI ThreadProc2(LPVOID lp)
 {
 	THREAD_DATA* pThreadData = (THREAD_DATA*)lp;
-	Sleep(pThreadData->timeout);
-	pcap_breakloop(pThreadData->fp);
-	pcap_close(pThreadData->fp);
+	pcap_loop(pThreadData->fp, 2000, udp_packet_handler, NULL);
 	return 0L;
 }
 DWORD WINAPI ThreadSendPacket(LPVOID lp)
@@ -87,6 +85,7 @@ void SendRaw ::ifprint(pcap_if_t *d)
 	}
 	printf("\n");
 }
+
 pcap_if_t * SendRaw:: IpfindIf(string ipv4)
 {
 	pcap_addr_t *a;
@@ -192,7 +191,7 @@ void SendRaw::OS_fp_get(string ipaddr)
 	}
 }
 
-int SendRaw::tcpScanpre(string ipaddr)
+int SendRaw::Scanpre(string ipaddr)
 {
 	d = IpfindIf(ipaddr);
 	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
@@ -203,6 +202,7 @@ int SendRaw::tcpScanpre(string ipaddr)
 	MacLocal = (char*)malloc(sizeof(MacLocal));
 	getlocalmacbyip(inet_addr(ipaddr.c_str()), MacLocal);
 }
+
 int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags, uint16_t win, uint16_t ipflag)
 {
 	//Ethernet
@@ -270,9 +270,114 @@ int SendRaw::tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags
 	return 0;
 }
 
+void SendRaw::udpScanPortList(string ipaddr, vector<uint16_t>& ports)
+{
+	Scanpre(ipaddr);
+	for (int i = 0; i < ports.size(); i++)
+	{
+		udpScan(ipaddr, ports[i]);
+	}
+	udpReceive(ipaddr,14000);
+
+}
+
+void SendRaw::udp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>&portlist, vector<string>& ScanResults)
+{
+	in_addr mAddr;
+	ScanResults.push_back("###\nfunction48=UDPScan\n$$$\nUdp ports status scan...\n");
+	for (int i = 0; i < inputIP.size(); i++)
+	{
+		mAddr.S_un.S_addr = inputIP[i];
+		char buff[100];
+		snprintf(buff, 100, "UDP Scanning IP: %s\n", inet_ntoa(mAddr));
+		ScanResults.push_back(buff);
+		udpScanPortList(inet_ntoa(mAddr), portlist);
+		//udpScan_socket(inputIP[i], udp_open_ps, ScanResults);
+		ScanResults.push_back(udp_temp_results);
+		udp_temp_results.clear();
+		for (int j = 0; j < udp_to_scan_ports.size(); j++)
+		{
+			ScanResults.push_back((char)udp_to_scan_ports[j] + "\tunknown\n");
+		}
+		udp_to_scan_ports.clear();
+	}
+	pcap_close(fp);
+}
+
+void SendRaw::udpScan(string ipaddr, uint16_t port)
+{
+	//Ethernet
+	MacAddr = getMac(inet_addr(ipaddr.c_str()));
+	if (MacAddr == NULL)
+		return ;
+	memcpy(packet, MacAddr, 6);
+	memcpy(packet + 6, MacLocal, 6);
+	packet[12] = 0x08;
+	packet[13] = 0x00;
+	//IPHDR
+	IPHDR iphdr;
+	iphdr.h_lenver = 0x45;
+	iphdr.tos = 0x00;
+	iphdr.total_len = 0;
+	iphdr.ident = 0xcdbb;
+	iphdr.frag_and_flags = 0x00;
+	iphdr.ttl = 0x38;
+	iphdr.proto = 0x11;
+	iphdr.checksum = 0x00;
+	iphdr.srcIP = inet_addr(lhIP.c_str());
+	iphdr.desIP = inet_addr(ipaddr.c_str());
+	//UDP
+	UDPHDR udphdr;
+	udphdr.src_port = htons(60341);
+	udphdr.des_port = htons(port);
+	udphdr.length = 0x00;
+	udphdr.cksum = 0x00;
+
+	//length && checksum
+	udphdr.length = htons(sizeof(udphdr));
+
+	memcpy(buff, &iphdr.srcIP, sizeof(int));
+	memcpy(buff + 4, &iphdr.desIP, sizeof(int));
+	memcpy(buff + 8, &udphdr, sizeof(udphdr));
+	u_short t = 0x1100;
+	memcpy(buff + 8 + sizeof(udphdr), &t, sizeof(u_short));
+	memcpy(buff + 10 + sizeof(udphdr), &udphdr.length, sizeof(u_short));
+	udphdr.cksum = checksum((USHORT*)buff, sizeof(udphdr) + 12 );
+
+	iphdr.total_len = htons(sizeof(iphdr) + sizeof(udphdr));
+	memcpy(buff, &iphdr, sizeof(iphdr));
+	iphdr.checksum = checksum((USHORT*)buff, sizeof(iphdr));
+	memcpy(buff, &iphdr, sizeof(iphdr));
+	memcpy(buff + sizeof(iphdr), &udphdr, sizeof(udphdr));
+	memcpy(packet + 14, buff, sizeof(iphdr) + sizeof(udphdr));
+	if (pcap_sendpacket(fp,
+		packet,
+		14 + sizeof(iphdr) + sizeof(udphdr) 
+	) != 0)
+	{
+		fprintf(stderr, "\nError sending the packet : %s\n", pcap_geterr(fp));
+		return ;
+	}
+	return ;
+}
+
+void SendRaw::udpReceive(string ipaddr, int timeout)
+{
+	string packet_filter = "icmp and src host ";
+	packet_filter = packet_filter + ipaddr;
+	setFilter(ipaddr, (char*)packet_filter.c_str());
+	THREAD_DATA threadData;
+	threadData.fp = fp;
+	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
+	Sleep(timeout); // must be smaller than time in ThreadProc2, thread1 can not be null 
+	CloseHandle(thread1); // if thread1 = null, an error occurs.
+	getUdpOpenPorts(udp_to_scan_ports);
+	udp_to_scan_ports.clear();
+}
+
 int SendRaw::tcpScanPortList(string ipaddr, vector<uint16_t> &ports)
 {
-	tcpScanpre(ipaddr);
+	Scanpre(ipaddr);
 	for (int i = 0; i < ports.size(); i++)
 	{
 		tcpScan(ipaddr, ports[i], 26666, 2, 1024, 0x00);
@@ -280,6 +385,7 @@ int SendRaw::tcpScanPortList(string ipaddr, vector<uint16_t> &ports)
 	tcpReceive(ipaddr,14000);
 	return 0;
 }
+
 int SendRaw::setFilter(string ipaddr,char packet_filter[])
 {
 	u_int netmask;
@@ -325,11 +431,9 @@ int SendRaw::tcpScan2(string ipaddr,vector<uint16_t> &ports)
 	threadData.timeout = 150000;
 	threadData.ports = ports;
 	HANDLE thread1 = CreateThread(NULL, 0, ThreadProc1, &threadData, 0, NULL);
-	HANDLE thread2 = CreateThread(NULL, 0, ThreadProc2, &threadData, 0, NULL);
 	HANDLE thread3 = CreateThread(NULL, 0, ThreadSendPacket, &threadData, 0, NULL);
 	Sleep(14000); // must be smaller than time in ThreadProc2, thread1 can not be null 
 	CloseHandle(thread1); // if thread1 = null, an error occurs.
-	CloseHandle(thread2);
 	CloseHandle(thread3);
 	getTcpOpenPorts(tcp_open_ports);
 	return 0;
@@ -350,6 +454,7 @@ int SendRaw::tcpReceive(string ipaddr, int timeout)
 	tcp_open_ports.clear();
 	return 0;
 }
+
 int SendRaw::snmpScan(string ipaddr)
 {	
 	d = IpfindIf(ipaddr);
@@ -606,9 +711,20 @@ void SendRaw::getTcpOpenPorts(vector<uint16_t> &tcp_open_p)
 		if (it == tcp_open_ps.end())
 			tcp_open_ps.push_back(tcp_open_p[i]);
 	}
-	for (int i = 0; i < tcp_open_ps.size(); i++)
+}
+
+void SendRaw::getUdpOpenPorts(vector<uint16_t>& udp_open_p)
+{
+	vector<uint16_t>::iterator it;
+	for (int i = 0; i < udp_open_p.size(); i++)
 	{
-		cout << tcp_open_ps[i] << "\topen" << endl;
+		it = find(udp_open_ps.begin(), udp_open_ps.end(), udp_open_ps[i]);
+		if (it == udp_open_ps.end())
+			udp_open_ps.push_back(udp_open_ps[i]);
+	}
+	for (int i = 0; i < udp_open_ps.size(); i++)
+	{
+		cout << udp_open_ps[i] << "\topen" << endl;
 	}
 }
 
@@ -616,10 +732,11 @@ void SendRaw::free_alldevs()
 {
 	pcap_freealldevs(alldevs);
 }
+
 void SendRaw::tcp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults)
 {
 	in_addr mAddr;
-	ScanResults.push_back("###\nfunction46=TCPScan\n$$$\nTcp ports status and banner scan...\n");
+	ScanResults.push_back("###\nfunction47=TCPScan\n$$$\nTcp ports status and banner scan...\n");
 	for (int i = 0; i < inputIP.size(); i++)
 	{
 		mAddr.S_un.S_addr = inputIP[i];
@@ -682,6 +799,64 @@ void SendRaw::tcpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist,vect
 			}
 			else {
 				ScanResults.push_back( (char)buff + "\n");
+			}
+		}
+		cnt++;
+		closesocket(mysocket);
+	}
+	return;
+}
+
+void SendRaw::udpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist, vector<string>& ScanResults)
+{
+	SOCKET mysocket = INVALID_SOCKET;
+	sockaddr_in my_addr;
+	timeval tv = { 1000 ,0 };
+	int opt = 5;
+	int status, ret;
+	WSADATA wsa;
+	if (status = WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		exit(EXIT_FAILURE);
+	}
+	int cnt = 0;
+	while (cnt < portlist.size())
+	{
+		if ((mysocket = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP)) == INVALID_SOCKET)
+		{
+			perror("socket:");
+			continue;
+		}
+		setsockopt(mysocket, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(timeval));
+		setsockopt(mysocket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
+		if ((setsockopt(mysocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval))) < -1)
+			return;
+		my_addr.sin_family = AF_INET;
+		my_addr.sin_addr.s_addr = ipaddr;
+		my_addr.sin_port = htons(portlist[cnt]);
+		ret = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+		char buff[200];
+		if (ret == -1)
+		{
+			if (WSAGetLastError() == 10061)
+			{
+				snprintf(buff, 20, "%d\tclosed\n", portlist[cnt]);
+				ScanResults.push_back(buff);
+			}
+		}
+		else
+		{
+			snprintf(buff, 20, "%d\topen\t", portlist[cnt]);
+			ScanResults.push_back(buff);
+			memset(buff, 0, 200);
+			if (recv(mysocket, buff, 200, 0) == SOCKET_ERROR)
+			{
+				if (WSAGetLastError() == WSAETIMEDOUT)
+				{
+					ScanResults.push_back("banner unknown\n");
+				}
+			}
+			else {
+				ScanResults.push_back((char)buff + "\n");
 			}
 		}
 		cnt++;

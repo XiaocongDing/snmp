@@ -993,3 +993,45 @@ TCP Scanning IP: 192.168.0.20
 912	open	outers found
 5357	open	banner unknown
 1080	open	outers found
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:16 Min:59 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	0ms	Windows	128	
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.180.132
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:17 Min:1 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	0ms	Windows	128	
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.180.132
+###
+StartTime
+$$$
+Year:2020 Month:10 Day:20 Hours:17 Min:5 
+###
+function43=ICMPScan
+$$$
+IpAddress	state	Delay	OS	TTL
+192.168.180.132	alive	0ms	Windows	128	
+###
+function48=UDPScan
+$$$
+Udp ports status scan...
+UDP Scanning IP: 192.168.180.132

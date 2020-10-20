@@ -1,6 +1,4 @@
 #pragma once
-
-#include "tcp.h"
 #include "icmp.h"
 #include "snmp.h"
 typedef bool flag;

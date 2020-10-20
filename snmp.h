@@ -43,6 +43,7 @@ private:
 	u_char packet[200];
 
 	vector<uint16_t> tcp_open_ps;
+	vector<uint16_t> udp_open_ps;
 	vector<string> fingerprints;
 
 public:
@@ -58,7 +59,7 @@ public:
 	void ifprint(pcap_if_t* d);
 	int snmpScan(string ipaddr);
 	
-	int tcpScanpre(string ipaddr);
+	int Scanpre(string ipaddr);
 	int tcpScan(string ipaddr, uint16_t dport, uint16_t sport,uint8_t flags, uint16_t win,uint16_t ipflag);
 	int tcpScanPortList(string ipaddr, vector<uint16_t>& ports);
 	char* getMac(u_long ip);
@@ -78,11 +79,21 @@ public:
 	void tcp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults); 
 	//void packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data);
 
-	void udp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults);
+	void udpScanPortList(string ipaddr, vector<uint16_t>& ports);
+	void udp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>&portlist, vector<string>& ScanResults);
+	void udpReceive(string ipaddr, int timeout);
+	void udpScan(string ipaddr, uint16_t port);
+	void udpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist, vector<string>& ScanResults);
+	void getUdpOpenPorts(vector<uint16_t>& udp_open_p);
 };
 
 
 static vector<uint16_t> tcp_open_ports;
+static vector<uint16_t> udp_open_ports;
+
+static vector<uint16_t> udp_to_scan_ports;
+static string udp_temp_results;
+
 static u_char packetdata[2000];
 
 static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
@@ -110,7 +121,35 @@ static void snmp_packet_handler(u_char* param, const struct pcap_pkthdr* header,
 	packetdata[len] = '\0';
 }
 
+static void udp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
+{
+	u_char buff[2000];
+	u_char* p;
+	IP_HDR* ih;
+	UDP_HDR* uh;
+	u_int ip_len;
+	uint16_t sport, dport;
+	in_addr mAddr_des, mAddr_src;
 
+	ih = (IP_HDR*)(pkt_data + 14);
+	ip_len = (ih->h_lenver & 0xf) * 4;
+	if (ih->proto == 0x01)
+	{
+		dport = (u_short)(pkt_data + 64);
+		dport = htons(dport);
+		cout << "udp ports\t" << dport << "\tclosed"<<endl;
+		udp_temp_results = udp_temp_results + (char*)dport + "\tclosed";
+		cout << udp_temp_results << endl;
+		vector<uint16_t>::iterator it;
+		for (it = udp_to_scan_ports.begin(); it != udp_to_scan_ports.end(); it++)
+		{
+			if (*it == dport)
+				it = udp_to_scan_ports.erase(it);
+		}
+	}
+
+	uh = (UDP_HDR*)((u_char*)ih + ip_len);
+}
 
 static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, const u_char* pkt_data)
 {
@@ -133,7 +172,7 @@ static void tcp_packet_handler(u_char* param, const struct pcap_pkthdr* header, 
 	sport = ntohs(th->th_sport);
 	dport = ntohs(th->th_dport);
 
-	tcp_open_ports.push_back((int)sport);
+	tcp_open_ports.push_back((uint16_t)sport);
 
 	mAddr_src.S_un.S_addr = ih->srcIP;
 	mAddr_des.S_un.S_addr = ih->desIP;

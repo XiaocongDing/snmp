@@ -20,6 +20,7 @@ void Scan::Scan_Start()
 		}
 	}*/
 	mergeAliveip();
+	traceroute_flag = false;
 	if (traceroute_flag)
 	{
 		if (icmp_flag)
@@ -62,6 +63,7 @@ void Scan::Scan_Start()
 			raw.snmp_Segment_Scan(tracertIP, ScanResults);
 		}
 	}
+	tcp_flag = false;
 	if (tcp_flag)
 	{
 		if (aliveHostScaned)
@@ -81,8 +83,28 @@ void Scan::Scan_Start()
 			raw.tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
 		}
 	}
-	
-	
-	
+	if (udp_flag)
+	{
+		if (aliveHostScaned)
+		{
+			raw.udp_Segment_Scan(aliveIP, udp_scan_ports, ScanResults);
+		}
+		else
+		{
+			vector<unsigned long> ip_udp_to_scan;
+			for (i = 0; i < ipranges.size(); i++)
+			{
+				for (int j = swap_endian(ipranges[i].first); j < swap_endian(ipranges[i].second); j++)
+				{
+					ip_udp_to_scan.push_back(swap_endian(j));
+				}
+			}
+			raw.udp_Segment_Scan(ip_udp_to_scan, udp_scan_ports, ScanResults);
+		}
+	}
+	if (host_os_flag)
+	{
+
+	}
 	
 }

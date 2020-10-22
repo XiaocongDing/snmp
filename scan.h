@@ -232,6 +232,7 @@ public:
 		}
 	}
 	void Scan_Start();
+	void os_info_scan(vector <unsigned long> aliveIp, vector<string>& ScanResults);
 	vector<string> getResult()
 	{
 		return ScanResults;

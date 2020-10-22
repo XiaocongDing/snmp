@@ -131,9 +131,12 @@ static void udp_packet_handler(u_char* param, const struct pcap_pkthdr* header, 
 	char buff[200];
 	ih = (IP_HDR*)(pkt_data + 14);
 	ip_len = (ih->h_lenver & 0xf) * 4;
+	dport = (u_short)(pkt_data + 64);
+	mAddr_src.S_un.S_addr = ih->srcIP;
+	cout << inet_ntoa(mAddr_src) << "\t" << dport << endl;
 	if (ih->proto == 0x01)
 	{
-		dport = (u_short)(pkt_data + 64);
+		
 		snprintf(buff, 200, "%d\tclosed\n", dport);
 		udp_temp_results = udp_temp_results + buff;
 		vector<uint16_t>::iterator it;
@@ -347,7 +350,23 @@ static byte d3[] = {
 ,0x41,0x43,0x41,0x43,0x41,0x41,0x41,0x00
 };
 
-static int SmpScan2(string ipaddr,int flag139)
+static void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+{
+	std::string::size_type pos1, pos2;
+	pos2 = s.find(c);
+	pos1 = 0;
+	while (std::string::npos != pos2)
+	{
+		v.push_back(s.substr(pos1, pos2 - pos1));
+
+		pos1 = pos2 + c.size();
+		pos2 = s.find(c, pos1);
+	}
+	if (pos1 != s.length())
+		v.push_back(s.substr(pos1));
+}
+
+static int SmbScan2(unsigned long ipaddr,int flag139,vector<string> &ScanResults)
 {
 	WSADATA wsaData;
 	unsigned int sock, addr, i;
@@ -369,8 +388,8 @@ static int SmpScan2(string ipaddr,int flag139)
 		printf("socket() error...\n");
 		exit(-1);
 	}
-	addr = inet_addr(ipaddr.c_str());
-	smbtcp.sin_addr.s_addr = addr;
+	
+	smbtcp.sin_addr.s_addr = ipaddr;
 	smbtcp.sin_family = AF_INET;
 	smbtcp.sin_port = htons(smbport);
 
@@ -386,12 +405,21 @@ static int SmpScan2(string ipaddr,int flag139)
 			send(sock, (char*)d3, sizeof(d3) - 1, 0);
 			rc = recv(sock, (char*)infobuf, 1024, 0);
 		}
-		send(sock, (char*)d1, sizeof(d1) - 1, 0);
+		send(sock, (char*)d1, sizeof(d1), 0);
 		rc = recv(sock, (char*)infobuf, 1024, 0);
-		send(sock, (char*)d2, sizeof(d2) - 1, 0);
+		send(sock, (char*)d2, sizeof(d2), 0);
 		rc = recv(sock, (char*)infobuf, 1024, 0);
+		vector<string> results;
+		
+		uint32_t len;
+		len = (int)infobuf[3] + (int)infobuf[2] * 256;
+		char buff[1024];
+		memcpy(buff, infobuf + len - 128, 128);
+		results = SplitString(buff, results,"\0\0");
+		cout << results.size() << endl;
+
 	}
-	closesocket(sock);
+	//closesocket(sock);
 	free(infobuf);
 	return 0;
 }

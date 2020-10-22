@@ -365,7 +365,7 @@ void SendRaw::udpScan(string ipaddr, uint16_t port)
 
 void SendRaw::udpReceive(string ipaddr, int timeout)
 {
-	string packet_filter = "icmp and src host ";
+	string packet_filter = "src host ";
 	packet_filter = packet_filter + ipaddr;
 	setFilter(ipaddr, (char*)packet_filter.c_str());
 	THREAD_DATA threadData;
@@ -867,3 +867,4 @@ void SendRaw::udpScan_socket(unsigned long ipaddr, vector<uint16_t>portlist, vec
 	}
 	return;
 }
+

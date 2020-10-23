@@ -1,15 +1,107 @@
 ﻿  main.cpp
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\main.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\basic.h(33,2): warning C4091: “typedef ”: 没有声明变量时忽略“UDPHDR”的左侧
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(72,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(152,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(161,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,14): warning C4101: “tick”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,20): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(235,10): warning C4101: “wsa”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(311,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(347,22): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,20): warning C4101: “mAddr_src”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,10): warning C4101: “sport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,17): warning C4101: “dport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(134,34): warning C4302: “类型强制转换”: 从“const u_char *”到“u_short”截断
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(130,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(127,11): warning C4101: “uh”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(153,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,21): warning C4101: “addr”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(193,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(202,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(207,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(216,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(222,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(228,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\main.cpp(17,20): warning C4018: “<”: 有符号/无符号不匹配
+  scan.cpp
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(7,1): warning C4005: “_WINSOCK_DEPRECATED_NO_WARNINGS”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“_WINSOCK_DEPRECATED_NO_WARNINGS”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp : message : 参见“WIN32”的前一个定义
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(72,29): warning C4244: “=”: 从“unsigned long”转换到“unsigned short”，可能丢失数据
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(152,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(161,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,14): warning C4101: “tick”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(234,20): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(235,10): warning C4101: “wsa”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(311,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\icmp.h(347,22): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,20): warning C4101: “mAddr_src”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,10): warning C4101: “sport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,17): warning C4101: “dport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(134,34): warning C4302: “类型强制转换”: 从“const u_char *”到“u_short”截断
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(130,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(127,11): warning C4101: “uh”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(153,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,21): warning C4101: “addr”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\scan.h(193,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(202,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(207,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(216,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(222,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.h(228,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(11,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(19,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(34,19): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(51,19): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(78,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(80,52): warning C4018: “<=”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(98,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(100,52): warning C4018: “<=”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(117,18): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(119,52): warning C4018: “<=”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(146,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\scan.cpp(156,14): warning C4018: “<”: 有符号/无符号不匹配
   snmp.cpp
 C:\Users\Z\source\repos\snmp\snmp\basic.h(2,1): warning C4005: “WIN32”: 宏重定义
 C:\Users\Z\source\repos\snmp\snmp\snmp.cpp : message : 参见“WIN32”的前一个定义
-C:\Users\Z\source\repos\snmp\snmp\basic.h(33,2): warning C4091: “typedef ”: 没有声明变量时忽略“UDPHDR”的左侧
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(6,7): warning C4101: “ip6str”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(107,20): warning C4101: “mAddr_src”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,10): warning C4101: “sport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(106,17): warning C4101: “dport”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(134,34): warning C4302: “类型强制转换”: 从“const u_char *”到“u_short”截断
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(130,10): warning C4101: “mAddr_des”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(127,11): warning C4101: “uh”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(153,9): warning C4101: “buff”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,27): warning C4101: “i”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.h(388,21): warning C4101: “addr”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(50,7): warning C4101: “ip6str”: 未引用的局部变量
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(136,11): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(188,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(276,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(288,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(299,21): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(382,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(579,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(709,17): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(720,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(726,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(741,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(765,13): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(825,13): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(862,38): warning C4302: “类型强制转换”: 从“char *”到“char”截断
   正在生成代码
   Previous IPDB not found, fall back to full compilation.
-C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(123): warning C4172: 返回局部变量或临时变量的地址: MacArr
-  All 259 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(610): warning C4172: 返回局部变量或临时变量的地址: MacArr
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(423): warning C4715: “SendRaw::setFilter”: 不是所有的控件路径都返回值
+C:\Users\Z\source\repos\snmp\snmp\snmp.cpp(204): warning C4715: “SendRaw::Scanpre”: 不是所有的控件路径都返回值
+  All 1710 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   已完成代码的生成
   snmp.vcxproj -> C:\Users\Z\source\repos\snmp\Release\snmp.exe

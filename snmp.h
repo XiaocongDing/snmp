@@ -350,21 +350,37 @@ static byte d3[] = {
 ,0x41,0x43,0x41,0x43,0x41,0x41,0x41,0x00
 };
 
-static void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+static void SplitString(char *s, int len, std::vector<std::string>& v)
 {
-	std::string::size_type pos1, pos2;
-	pos2 = s.find(c);
-	pos1 = 0;
-	while (std::string::npos != pos2)
+	char* p = s;
+	int i,j;
+	i = j = 0;
+	char buff[200];
+	while (i < len)
 	{
-		v.push_back(s.substr(pos1, pos2 - pos1));
-
-		pos1 = pos2 + c.size();
-		pos2 = s.find(c, pos1);
+		if (*(p + i) == '\0')
+		{
+			if (*(p + i + 1) == '\0')
+			{
+				buff[j + 1] = '\0';
+				v.push_back(buff);
+				i++;
+				j = 0;
+			}
+			
+		}
+		else
+		{
+			if (*(p + i) == 32 || (*(p + i) >= 48 && *(p + i) <= 122))
+			{
+				buff[j] = *(p + i);
+				j++;
+			}
+		}
+		i++;
 	}
-	if (pos1 != s.length())
-		v.push_back(s.substr(pos1));
 }
+
 
 static int SmbScan2(unsigned long ipaddr,int flag139,vector<string> &ScanResults)
 {
@@ -377,6 +393,7 @@ static int SmbScan2(unsigned long ipaddr,int flag139,vector<string> &ScanResults
 	int rc;
 	struct sockaddr_in smbtcp;
 	unsigned int zeroc = 0;
+	timeval tv = { 1000 ,0 };
 	if (WSAStartup(MAKEWORD(2, 1), &wsaData) != 0)
 	{
 		printf("WSAStartup failed !\n");
@@ -388,7 +405,8 @@ static int SmbScan2(unsigned long ipaddr,int flag139,vector<string> &ScanResults
 		printf("socket() error...\n");
 		exit(-1);
 	}
-	
+	if ((setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval))) < -1)
+		return -1;
 	smbtcp.sin_addr.s_addr = ipaddr;
 	smbtcp.sin_family = AF_INET;
 	smbtcp.sin_port = htons(smbport);
@@ -409,17 +427,26 @@ static int SmbScan2(unsigned long ipaddr,int flag139,vector<string> &ScanResults
 		rc = recv(sock, (char*)infobuf, 1024, 0);
 		send(sock, (char*)d2, sizeof(d2), 0);
 		rc = recv(sock, (char*)infobuf, 1024, 0);
-		vector<string> results;
 		
-		uint32_t len;
-		len = (int)infobuf[3] + (int)infobuf[2] * 256;
-		char buff[1024];
-		memcpy(buff, infobuf + len - 128, 128);
-		results = SplitString(buff, results,"\0\0");
-		cout << results.size() << endl;
-
+		if (rc > 0)
+		{
+			vector<string> results;
+			uint32_t len;
+			len = (int)infobuf[3] + (int)infobuf[2] * 256;
+			char buff[1024];
+			memcpy(buff, infobuf + len - 128, 128);
+			SplitString(buff, 128, results);
+			cout << results.back() << endl;
+			snprintf(buff, 1024, "%s\n", results.back().c_str());
+			ScanResults.push_back(buff);
+			ScanResults.push_back("\n");
+		}
+		else {
+			cout << "Version Unkown\n";
+			ScanResults.push_back("Version Unknown\n");
+		}
 	}
-	//closesocket(sock);
+	closesocket(sock);
 	free(infobuf);
 	return 0;
 }

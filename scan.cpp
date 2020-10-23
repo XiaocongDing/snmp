@@ -5,7 +5,7 @@ void Scan::Scan_Start()
 	getTime(ScanResults);
 	if (!ip_range_flag||!tcp_scan_ports_flag)
 		return;
-	icmp_flag = false;
+	//icmp_flag = true;
 	if (icmp_flag)
 	{
 		for ( i = 0; i < ipranges.size(); i++)
@@ -13,7 +13,7 @@ void Scan::Scan_Start()
 			icmp_Segment_Scan(ipranges[i].first, ipranges[i].second, ScanResults, aliveIP_icmp);
 		}
 	}
-	arp_flag = false;
+	//arp_flag = false;
 	if (arp_flag)
 	{
 		for ( i = 0; i < ipranges.size(); i++)
@@ -22,7 +22,7 @@ void Scan::Scan_Start()
 		}
 	}
 	mergeAliveip();
-	traceroute_flag = false;
+	//traceroute_flag = false;
 	if (traceroute_flag)
 	{
 		if (icmp_flag)
@@ -37,7 +37,7 @@ void Scan::Scan_Start()
 			}
 		}
 	}
-	route_os_flag = false;
+	//route_os_flag = false;
 	if (route_os_flag)
 	{
 		if (traceroute_flag == 0)
@@ -65,7 +65,7 @@ void Scan::Scan_Start()
 			raw.snmp_Segment_Scan(tracertIP, ScanResults);
 		}
 	}
-	tcp_flag = false;
+	//tcp_flag = false;
 	if (tcp_flag)
 	{
 		if (aliveHostScaned)
@@ -85,7 +85,7 @@ void Scan::Scan_Start()
 			raw.tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
 		}
 	}
-	udp_flag = false;
+	//udp_flag = false;
 	if (udp_flag)
 	{
 		if (aliveHostScaned)
@@ -182,6 +182,8 @@ void Scan::os_info_scan(vector<unsigned long> aliveIp, vector<string>& ScanResul
 			ScanResults.push_back("Windows\t");
 			if (if445)
 				SmbScan2(aliveIp[i], false, ScanResults);
+			else
+				ScanResults.push_back("Version Unknown\n");
 		}
 		else
 		{

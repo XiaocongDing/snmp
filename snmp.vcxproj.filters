@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="snmp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -32,13 +29,13 @@
     <ClInclude Include="basic.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="snmp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="scan.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="icmp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TcpScan.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

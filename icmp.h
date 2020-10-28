@@ -39,6 +39,7 @@ static void InitIcmpHeader(ICMP_HDR* icmp_hdr) {
 }
 static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResults);
 static void traceroute(unsigned long starthost, unsigned long endhost, vector<string>& ScanResults);
+static string getLocalipbyremote(string remote);
 
 static void icmp_Segment_Scan(unsigned long starthost, unsigned long endhost, vector<string> &ScanResults,vector<unsigned long>&aliveIp)
 {
@@ -381,4 +382,62 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 		cmd = "cmd /c tracert ";
 	}
 	
+}
+
+static string getLocalipbyremote(string remote)
+{
+	int status, tick, i;
+	WSADATA wsa;
+	SOCKET sock = INVALID_SOCKET;
+
+	ICMP_HDR* icmp_hdr, * recv_icmp;
+	unsigned short nSeq = 0;
+	int nLen = sizeof(sockaddr_in);
+	sockaddr_in dest, from;
+
+
+	InitializeWinsock();
+
+	sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+
+	if (sock == INVALID_SOCKET) {
+		if (WSAGetLastError() == 10013) {
+			printf("Socket Failed: Permission denied.\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+	dest.sin_family = AF_INET;
+
+	timeval tv = { 1000, 0 };
+	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval));
+
+	char recvBuf[1024 * 5];
+	char buff[sizeof(ICMP_HDR) + 32];
+	icmp_hdr = (ICMP_HDR*)buff;
+
+	dest.sin_addr.s_addr = inet_addr(remote.c_str());
+	InitIcmpHeader(icmp_hdr);
+	icmp_hdr->icmp_sequence = 1;
+	icmp_hdr->icmp_checksum = checksum((unsigned short*)buff, sizeof(ICMP_HDR) + 32);
+
+	status = sendto(sock, buff, sizeof(ICMP_HDR) + 32, 0, (SOCKADDR*)&dest, sizeof(dest));
+
+	if (status == SOCKET_ERROR) {
+		printf("sent() error:%d\n", WSAGetLastError());
+		exit(EXIT_FAILURE);
+	}
+
+	status = recvfrom(sock, recvBuf, 1024 * 5, 0, (SOCKADDR*)&from, &nLen);
+	recv_icmp = (ICMP_HDR*)(recvBuf + 20);
+	IPHDR* recv_ip = (IPHDR*)(recvBuf);
+
+	if (status == SOCKET_ERROR) {
+		//cout << "failed to get localhost ip" << endl;
+		return "fail";
+	}
+	else
+	{
+		from.sin_addr.s_addr = recv_ip->desIP;
+		return inet_ntoa(from.sin_addr);
+	}
 }

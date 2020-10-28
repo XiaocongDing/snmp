@@ -1,11 +1,11 @@
 #include"scan.h"
+
 void Scan::Scan_Start()
 {
 	int i;
 	getTime(ScanResults);
-	if (!ip_range_flag||!tcp_scan_ports_flag)
-		return;
 	//icmp_flag = true;
+	cout << "icmp start" << endl;
 	if (icmp_flag)
 	{
 		for ( i = 0; i < ipranges.size(); i++)
@@ -16,6 +16,7 @@ void Scan::Scan_Start()
 	//arp_flag = false;
 	if (arp_flag)
 	{
+		cout << "arp scan start" << endl;
 		for ( i = 0; i < ipranges.size(); i++)
 		{
 			arp_Segment_Scan(ipranges[i].first, ipranges[i].second, ScanResults, aliveIP_arp);
@@ -23,6 +24,7 @@ void Scan::Scan_Start()
 	}
 	mergeAliveip();
 	//traceroute_flag = false;
+	cout << "traceroute scan start" << endl;
 	if (traceroute_flag)
 	{
 		if (icmp_flag)
@@ -37,11 +39,13 @@ void Scan::Scan_Start()
 			}
 		}
 	}
+	cout << "route os scan start" << endl;
 	//route_os_flag = false;
 	if (route_os_flag)
 	{
 		if (traceroute_flag == 0)
 		{
+			cout << "hasn't traceroute start tr" << endl;
 			if (icmp_flag)
 			{
 				traceroute(aliveIP_icmp, ScanResults);
@@ -62,15 +66,16 @@ void Scan::Scan_Start()
 		else
 		{
 			tracertIP.erase(unique(tracertIP.begin(), tracertIP.end()), tracertIP.end());
-			raw.snmp_Segment_Scan(tracertIP, ScanResults);
+			snmp_Segment_Scan(tracertIP, ScanResults);
 		}
 	}
 	//tcp_flag = false;
+	cout << "tcp scan start..." << endl;
 	if (tcp_flag)
 	{
 		if (aliveHostScaned)
 		{
-			raw.tcp_Segment_Scan(aliveIP, tcp_scan_ports, ScanResults);
+			tcp_Segment_Scan(aliveIP, tcp_scan_ports, ScanResults);
 		}
 		else
 		{
@@ -82,15 +87,16 @@ void Scan::Scan_Start()
 					ip_tcp_to_scan.push_back(swap_endian(j));
 				}
 			}
-			raw.tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
+			tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
 		}
 	}
+	cout << "udp scan start..." << endl;
 	//udp_flag = false;
 	if (udp_flag)
 	{
 		if (aliveHostScaned)
 		{
-			raw.udp_Segment_Scan(aliveIP, udp_scan_ports, ScanResults);
+			udp_Segment_Scan(aliveIP, udp_scan_ports, ScanResults);
 		}
 		else
 		{
@@ -102,9 +108,10 @@ void Scan::Scan_Start()
 					ip_udp_to_scan.push_back(swap_endian(j));
 				}
 			}
-			raw.udp_Segment_Scan(ip_udp_to_scan, udp_scan_ports, ScanResults);
+			udp_Segment_Scan(ip_udp_to_scan, udp_scan_ports, ScanResults);
 		}
 	}
+	cout << "os scan start..." << endl;
 	if (host_os_flag)
 	{
 		if (aliveHostScaned)
@@ -175,7 +182,7 @@ void Scan::os_info_scan(vector<unsigned long> aliveIp, vector<string>& ScanResul
 					if445 = true;
 			}
 			cnt++;
-			closesocket(mysocket);
+			
 		}
 		if (ifwin)
 		{
@@ -183,12 +190,21 @@ void Scan::os_info_scan(vector<unsigned long> aliveIp, vector<string>& ScanResul
 			if (if445)
 				SmbScan2(aliveIp[i], false, ScanResults);
 			else
-				ScanResults.push_back("Version Unknown\n");
+				ScanResults.push_back("\n");
 		}
 		else
 		{
-			ScanResults.push_back("Unknown\n");
+			my_addr.sin_port = htons(22);
+			ret = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+			if (ret != -1)
+			{
+				ScanResults.push_back("Linux\n");
+			}
+			else
+			{
+				ScanResults.push_back("Windows/Linux\n");
+			}
 		}
-		
+		closesocket(mysocket);
 	}
 }

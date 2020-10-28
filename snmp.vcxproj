@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scan.cpp" />
-    <ClCompile Include="snmp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -171,7 +170,7 @@
     <ClInclude Include="basic.h" />
     <ClInclude Include="icmp.h" />
     <ClInclude Include="scan.h" />
-    <ClInclude Include="snmp.h" />
+    <ClInclude Include="TcpScan.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -91,9 +91,14 @@ pcap_if_t * SendRaw:: IpfindIf(string ipv4)
 	pcap_addr_t *a;
 	pcap_if_t *p;
 	string t;
+	
+	string icmp_ip = getLocalipbyremote(ipv4);
+	cout << "ip by icmp: " << icmp_ip << endl;
+	if (icmp_ip.compare("fail"))
+		ipv4 = icmp_ip;
 	int end = ipv4.find_last_of('.');
 	ipv4 = ipv4.substr(0, end);
-	
+
 	for( p =alldevs ; p ; p = p->next)
 	{
 		for(a = p->addresses; a ; a=a->next)
@@ -102,6 +107,8 @@ pcap_if_t * SendRaw:: IpfindIf(string ipv4)
 			{
 				t = iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr);
 				lhIP = t;
+				cout << "local host IP:" << t << endl;
+				
 				t = t.substr(0, end);
 				if (!ipv4.compare(t))
 				{
@@ -459,6 +466,11 @@ int SendRaw::tcpReceive(string ipaddr, int timeout)
 int SendRaw::snmpScan(string ipaddr)
 {	
 	d = IpfindIf(ipaddr);
+	if (d == NULL)
+	{
+		cout << "can't find ethernet adapter" << endl;
+		return -1;
+	}
 	fp = pcap_open_live(d->name, 65536, 1, 100, errbuf);
 	if (fp == NULL)
 	{
@@ -575,10 +587,13 @@ int SendRaw::snmpScan(string ipaddr)
 int SendRaw::snmp_Segment_Scan(vector<unsigned long> ipaddr, vector<string>& ScanResults)
 {
 	in_addr mAddr;
+	cout << "start Snmp Scan" << endl;
 	ScanResults.push_back("###\nfunction46=SNMPScan\n$$$\n");
+	cout << "ipaddr.size:" << ipaddr.size() << endl;
 	for (int i = 0; i < ipaddr.size(); i++)
 	{
 		mAddr.S_un.S_addr = ipaddr[i];
+		cout << "Snmp scan ip:" << inet_ntoa(mAddr) << endl;
 		snmpGet(inet_ntoa(mAddr), 1000, ScanResults);
 	}
 	return 0;
@@ -586,6 +601,7 @@ int SendRaw::snmp_Segment_Scan(vector<unsigned long> ipaddr, vector<string>& Sca
 
 int SendRaw::snmpGet(string ipaddr,int timeout,vector<string> &ScanResults)
 {
+	cout << "snmpGet" << ipaddr << endl;
 	snmpScan(ipaddr);
 	char packet_filter[] = "udp dst port 60340";
 	setFilter(ipaddr, packet_filter);
@@ -737,7 +753,7 @@ void SendRaw::free_alldevs()
 void SendRaw::tcp_Segment_Scan(vector<unsigned long> inputIP, vector<uint16_t>portlist, vector<string>& ScanResults)
 {
 	in_addr mAddr;
-	ScanResults.push_back("###\nfunction47=TCPScan\n$$$\nTcp ports status and banner scan...\n");
+	ScanResults.push_back("###\nfunction46=TCPScan\n$$$\nTcp ports status and banner scan...\n");
 	for (int i = 0; i < inputIP.size(); i++)
 	{
 		mAddr.S_un.S_addr = inputIP[i];

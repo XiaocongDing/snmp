@@ -2,6 +2,7 @@
 #ifndef SNMP
 #define SNMP
 #include "basic.h"
+#include "icmp.h"
 
 
 //#pragma pack(1)
@@ -49,10 +50,24 @@ private:
 public:
 	SendRaw()
 	{
+		pcap_addr_t* a;
+		pcap_if_t* p;
+		printf("get findalldevs\n");
 		if (pcap_findalldevs(&alldevs, errbuf) == -1)
 		{
-			exit(1);
+			printf("can't findalldevs\n");
 		}
+		for (p = alldevs; p; p = p->next)
+		{
+			for (a = p->addresses; a; a = a->next)
+			{
+				if (a->addr->sa_family == AF_INET)
+				{
+					cout << iptos(((struct sockaddr_in*)a->addr)->sin_addr.s_addr) << endl;
+				}
+			}
+		}
+		printf("errbuf:%s\n", errbuf);
 	}
 	pcap_if_t* IpfindIf(string ipv4);
 	char* iptos(u_long in);

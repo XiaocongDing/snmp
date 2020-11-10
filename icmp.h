@@ -130,7 +130,7 @@ static int ifSamenet(unsigned long ip)
 	char Name[255];
 	vector<string> localIP;
 	int count;
-	if (0 != WSAStartup(MAKEWORD(2, 2), &wsadata))   //³õÊ¼»¯
+	if (0 != WSAStartup(MAKEWORD(2, 2), &wsadata))   //ï¿½ï¿½Ê¼ï¿½ï¿½
 	{
 		return -1;
 	}
@@ -291,9 +291,10 @@ static string getLocalipbyremote(const char* remote)
 static void traceroute(unsigned long starthost, unsigned long endhost, vector<string>& ScanResults)
 {
 	vector<unsigned long>aliveIP;
-	for (unsigned long i = swap_endian(starthost); i < swap_endian(endhost); i++)
+	//////add on 1105
+	for (unsigned long i = swap_endian(starthost); i <= swap_endian(endhost); i++)
 	{
-		aliveIP.push_back(swap_endian(aliveIP[i]));
+		aliveIP.push_back(swap_endian(i));
 	}
 	traceroute(aliveIP, ScanResults);
 }
@@ -347,7 +348,9 @@ static void traceroute(vector<unsigned long>& aliveIP, vector<string>& ScanResul
 		{
 			for (int k = 1; k < stackIP.size()-1; k++)
 			{
-				tracertIP.push_back(inet_addr(stackIP[i].c_str()));
+				////add on 1105
+				tracertIP.push_back(inet_addr(stackIP[k].c_str()));
+				/////
 			}
 		}
 		

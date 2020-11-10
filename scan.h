@@ -1,50 +1,6 @@
 #pragma once
 #include "icmp.h"
-#include "TcpScan.h"
-typedef bool flag;
 
-static int SmbScan2(unsigned long ipaddr, int flag139, vector<string>& ScanResults);
-static void SplitString(char* s, int len, std::vector<std::string>& v);
-
-static byte d1[] = {
-	0x00, 0x00, 0x00, 0x85, 0xFF, 0x53, 0x4D, 0x42, 0x72, 0x00, 0x00, 0x00, 0x00, 0x18, 0x53, 0xC8,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFE,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0x00, 0x02, 0x50, 0x43, 0x20, 0x4E, 0x45, 0x54, 0x57, 0x4F,
-	0x52, 0x4B, 0x20, 0x50, 0x52, 0x4F, 0x47, 0x52, 0x41, 0x4D, 0x20, 0x31, 0x2E, 0x30, 0x00, 0x02,
-	0x4C, 0x41, 0x4E, 0x4D, 0x41, 0x4E, 0x31, 0x2E, 0x30, 0x00, 0x02, 0x57, 0x69, 0x6E, 0x64, 0x6F,
-	0x77, 0x73, 0x20, 0x66, 0x6F, 0x72, 0x20, 0x57, 0x6F, 0x72, 0x6B, 0x67, 0x72, 0x6F, 0x75, 0x70,
-	0x73, 0x20, 0x33, 0x2E, 0x31, 0x61, 0x00, 0x02, 0x4C, 0x4D, 0x31, 0x2E, 0x32, 0x58, 0x30, 0x30,
-	0x32, 0x00, 0x02, 0x4C, 0x41, 0x4E, 0x4D, 0x41, 0x4E, 0x32, 0x2E, 0x31, 0x00, 0x02, 0x4E, 0x54,
-	0x20, 0x4C, 0x4D, 0x20, 0x30, 0x2E, 0x31, 0x32, 0x00
-};
-
-static byte d2[] = {
-	0x00, 0x00, 0x01, 0x0A, 0xFF, 0x53, 0x4D, 0x42, 0x73, 0x00, 0x00, 0x00, 0x00, 0x18, 0x07, 0xC8,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFE,
-	0x00, 0x00, 0x40, 0x00, 0x0C, 0xFF, 0x00, 0x0A, 0x01, 0x04, 0x41, 0x32, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x4A, 0x00, 0x00, 0x00, 0x00, 0x00, 0xD4, 0x00, 0x00, 0xA0, 0xCF, 0x00, 0x60,
-	0x48, 0x06, 0x06, 0x2B, 0x06, 0x01, 0x05, 0x05, 0x02, 0xA0, 0x3E, 0x30, 0x3C, 0xA0, 0x0E, 0x30,
-	0x0C, 0x06, 0x0A, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x82, 0x37, 0x02, 0x02, 0x0A, 0xA2, 0x2A, 0x04,
-	0x28, 0x4E, 0x54, 0x4C, 0x4D, 0x53, 0x53, 0x50, 0x00, 0x01, 0x00, 0x00, 0x00, 0x07, 0x82, 0x08,
-	0xA2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x05, 0x02, 0xCE, 0x0E, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x57, 0x00, 0x69, 0x00, 0x6E, 0x00,
-	0x64, 0x00, 0x6F, 0x00, 0x77, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00,
-	0x76, 0x00, 0x65, 0x00, 0x72, 0x00, 0x20, 0x00, 0x32, 0x00, 0x30, 0x00, 0x30, 0x00, 0x33, 0x00,
-	0x20, 0x00, 0x33, 0x00, 0x37, 0x00, 0x39, 0x00, 0x30, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00,
-	0x72, 0x00, 0x76, 0x00, 0x69, 0x00, 0x63, 0x00, 0x65, 0x00, 0x20, 0x00, 0x50, 0x00, 0x61, 0x00,
-	0x63, 0x00, 0x6B, 0x00, 0x20, 0x00, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x57, 0x00, 0x69, 0x00,
-	0x6E, 0x00, 0x64, 0x00, 0x6F, 0x00, 0x77, 0x00, 0x73, 0x00, 0x20, 0x00, 0x53, 0x00, 0x65, 0x00,
-	0x72, 0x00, 0x76, 0x00, 0x65, 0x00, 0x72, 0x00, 0x20, 0x00, 0x32, 0x00, 0x30, 0x00, 0x30, 0x00,
-	0x33, 0x00, 0x20, 0x00, 0x35, 0x00, 0x2E, 0x00, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
-static byte d3[] = {
-0x81,0x00,0x00,0x44,0x20,0x43,0x4b,0x46,0x44,0x45,0x4e,0x45,0x43,0x46,0x44,0x45
-,0x46,0x46,0x43,0x46,0x47,0x45,0x46,0x46,0x43,0x43,0x41,0x43,0x41,0x43,0x41,0x43
-,0x41,0x43,0x41,0x43,0x41,0x00,0x20,0x43,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43
-,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43,0x41,0x43
-,0x41,0x43,0x41,0x43,0x41,0x41,0x41,0x00
-};
 
 class Scan {
 private:
@@ -106,68 +62,77 @@ public:
 		route_os_flag = route_os_f;
 		time_interval = time_v;
 		input_ip_ranges = ip_range_r;
-
-		int loc_a = 0;
-		int loc_b;
-		int loc;
-
-		if (input_ip_ranges.find("-",0)==input_ip_ranges.npos)
+		//////add on 1105
+		int loc_a, loc_b, loc;
+		string subtemp, ipaddr1, ipaddr2, ipaddr;
+		unsigned long ip_s, ip_e, ip_a;
+		int mask = 0;
+		loc_a = 0;
+		while ((loc_b = input_ip_ranges.find(";", loc_a)) != input_ip_ranges.npos)
 		{
-			int loc = 0;
-			if (input_ip_ranges.find("/",0)!=input_ip_ranges.npos)
+			subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
+			if ((loc = subtemp.find("-", 0)) != subtemp.npos)
 			{
-				loc = input_ip_ranges.find("/", 0);
-				string ipaddr;
-				ipaddr = input_ip_ranges.substr(0, loc);
-				int mask;
-				unsigned long ip_a, ip_s, ip_e;
-
-				mask = (int)stoi(input_ip_ranges.substr(loc + 1, input_ip_ranges.size()-loc-1));
-				ip_a = (unsigned long)pow(2, (32 - mask));
-				ip_s = (swap_endian(inet_addr(ipaddr.c_str())) / ip_a) * ip_a;
-				ip_e = ip_s + ip_a - 1;
-				ipranges.push_back(make_pair(swap_endian(ip_s), swap_endian(ip_e)));
-			}
-			else {
-				unsigned long ip_s;
-				ip_s = inet_addr(input_ip_ranges.c_str());
-				ipranges.push_back(make_pair(ip_s, ip_s));
-			}
-		}
-		else
-		{
-			char buff[200];
-			memcpy(buff, input_ip_ranges.c_str(), input_ip_ranges.size());
-			char* p = buff;
-		
-			string subtemp;
-			string ipaddr1, ipaddr2;
-			unsigned long ip_s, ip_e;
-			while (input_ip_ranges.find(",",loc_a)!=input_ip_ranges.npos)
-			{
-				loc_b = input_ip_ranges.find(",", loc_a);
-				subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
-				loc = subtemp.find("-", 0);
 				ipaddr1 = subtemp.substr(0, loc);
 				ipaddr2 = subtemp.substr(loc + 1, subtemp.size() - loc - 1);
 				ip_s = inet_addr(ipaddr1.c_str());
 				ip_e = inet_addr(ipaddr2.c_str());
 				ipranges.push_back(make_pair(ip_s, ip_e));
-				loc_a = loc_b + 1;
 			}
-			loc_b = input_ip_ranges.size();
-			subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
-			loc = subtemp.find("-", 0);
+			else if ((loc = subtemp.find("/", 0)) != subtemp.npos)
+			{
+				ipaddr = subtemp.substr(0, loc);
+				mask = (int)stoi(subtemp.substr(loc + 1, subtemp.size() - loc - 1));
+				ip_a = (unsigned long)pow(2, (32 - mask));
+				ip_s = (swap_endian(inet_addr(ipaddr.c_str())) / ip_a) * ip_a;
+				ip_e = ip_s + ip_a - 1;
+				ipranges.push_back(make_pair(swap_endian(ip_s), swap_endian(ip_e)));
+			}
+			else
+			{
+
+				ip_s = inet_addr(subtemp.c_str());
+				ipranges.push_back(make_pair(ip_s, ip_s));
+			}
+			loc_a = loc_b + 1;
+
+		}
+		loc_b = input_ip_ranges.size();
+		subtemp = input_ip_ranges.substr(loc_a, loc_b - loc_a);
+		if ((loc = subtemp.find("-", 0)) != subtemp.npos)
+		{
 			ipaddr1 = subtemp.substr(0, loc);
 			ipaddr2 = subtemp.substr(loc + 1, subtemp.size() - loc - 1);
 			ip_s = inet_addr(ipaddr1.c_str());
 			ip_e = inet_addr(ipaddr2.c_str());
 			ipranges.push_back(make_pair(ip_s, ip_e));
 		}
+		else if ((loc = subtemp.find("/", 0)) != subtemp.npos)
+		{
+			ipaddr = subtemp.substr(0, loc);
+			mask = (int)stoi(subtemp.substr(loc + 1, subtemp.size() - loc - 1));
+			ip_a = (unsigned long)pow(2, (32 - mask));
+			ip_s = (swap_endian(inet_addr(ipaddr.c_str())) / ip_a) * ip_a;
+			ip_e = ip_s + ip_a - 1;
+			ipranges.push_back(make_pair(swap_endian(ip_s), swap_endian(ip_e)));
+		}
+		else
+		{
+
+			ip_s = inet_addr(subtemp.c_str());
+			ipranges.push_back(make_pair(ip_s, ip_s));
+		}
+		///////////
 		/////ports
 		string port;
 		loc_a = loc = 0;
 		loc_b = scanPorts.find("/", 0);
+		///////add on 1106
+		if (loc_b == -1)
+		{
+			loc_b = scanPorts.size() + 20;
+		}
+		//////
 		do
 		{
 			loc = scanPorts.find(",", loc_a);
@@ -182,20 +147,25 @@ public:
 		tcp_scan_ports.push_back((uint16_t)stoi(port));
 
 
-		loc_a = loc_b + 1;
-		loc_b = scanPorts.size();
-		loc = loc_a;
-		while (loc < loc_b && scanPorts.find(",", loc_a) != scanPorts.npos)
+		///////add on 1106
+		if (loc_b != scanPorts.size() + 20)
 		{
-			loc = scanPorts.find(",", loc_a);
-			if (loc >= loc_b)
-				break;
-			port = scanPorts.substr(loc_a, loc-loc_a);
+			loc_a = loc_b + 1;
+			loc_b = scanPorts.size();
+			loc = loc_a;
+			while (loc < loc_b && scanPorts.find(",", loc_a) != scanPorts.npos)
+			{
+				loc = scanPorts.find(",", loc_a);
+				if (loc >= loc_b)
+					break;
+				port = scanPorts.substr(loc_a, loc - loc_a);
+				udp_scan_ports.push_back((uint16_t)stoi(port));
+				loc_a = loc + 1;
+			}
+			port = scanPorts.substr(loc_a, loc_b - loc_a);
 			udp_scan_ports.push_back((uint16_t)stoi(port));
-			loc_a = loc + 1;
 		}
-		port = scanPorts.substr(loc_a, loc_b - loc_a);
-		udp_scan_ports.push_back((uint16_t)stoi(port));
+		///////
 	}
 	void mergeAliveip()
 	{
@@ -278,101 +248,215 @@ public:
 	}
 };
 
-static void SplitString(char* s, int len, std::vector<std::string>& v)
+void Scan::Scan_Start()
 {
-	char* p = s;
-	int i, j;
-	i = j = 0;
-	char buff[200];
-	while (i < len)
+	int i;
+	//getTime(ScanResults);
+	cout << "icmp start" << endl;
+	if (icmp_flag)
 	{
-		if (*(p + i) == '\0')
+		for (i = 0; i < ipranges.size(); i++)
 		{
-			if (*(p + i + 1) == '\0')
-			{
-				buff[j + 1] = '\0';
-				v.push_back(buff);
-				i++;
-				j = 0;
-			}
-
+			icmp_Segment_Scan(ipranges[i].first, ipranges[i].second, ScanResults, aliveIP_icmp);
+		}
+	}
+	cout << "arp start" << endl;
+	if (arp_flag)
+	{
+		cout << "arp scan start" << endl;
+		for (i = 0; i < ipranges.size(); i++)
+		{
+			arp_Segment_Scan(ipranges[i].first, ipranges[i].second, ScanResults, aliveIP_arp);
+		}
+	}
+	mergeAliveip();
+	cout << "traceroute scan start" << endl;
+	if (traceroute_flag)
+	{
+		if (icmp_flag)
+		{
+			traceroute(aliveIP_icmp, ScanResults);
 		}
 		else
 		{
-			if (*(p + i) == 32 || (*(p + i) >= 48 && *(p + i) <= 122))
+			for (i = 0; i < ipranges.size(); i++)
 			{
-				buff[j] = *(p + i);
-				j++;
+				traceroute(ipranges[i].first, ipranges[i].second, ScanResults);
 			}
 		}
-		i++;
 	}
+	cout << "tcp scan start..." << endl;
+	if (tcp_flag)
+	{
+		if (aliveHostScaned)
+		{
+			tcp_Segment_Scan(aliveIP, tcp_scan_ports, ScanResults);
+		}
+		else
+		{
+			vector<unsigned long> ip_tcp_to_scan;
+			for (i = 0; i < ipranges.size(); i++)
+			{
+				for (int j = swap_endian(ipranges[i].first); j <= swap_endian(ipranges[i].second); j++)
+				{
+					ip_tcp_to_scan.push_back(swap_endian(j));
+				}
+			}
+			tcp_Segment_Scan(ip_tcp_to_scan, tcp_scan_ports, ScanResults);
+		}
+	}
+	cout << "udp scan start..." << endl;
+	if (udp_flag)
+	{
+		if (aliveHostScaned)
+		{
+			udp_Segment_Scan(aliveIP, udp_scan_ports, ScanResults);
+		}
+		else
+		{
+			vector<unsigned long> ip_udp_to_scan;
+			for (i = 0; i < ipranges.size(); i++)
+			{
+				for (int j = swap_endian(ipranges[i].first); j <= swap_endian(ipranges[i].second); j++)
+				{
+					ip_udp_to_scan.push_back(swap_endian(j));
+				}
+			}
+			udp_Segment_Scan(ip_udp_to_scan, udp_scan_ports, ScanResults);
+		}
+	}
+	cout << "route os scan start" << endl;
+	if (route_os_flag)
+	{
+		if (traceroute_flag == 0)
+		{
+			cout << "hasn't traceroute start tr" << endl;
+			if (icmp_flag)
+			{
+				traceroute(aliveIP_icmp, ScanResults);
+			}
+			else
+			{
+				for (i = 0; i < ipranges.size(); i++)
+				{
+					traceroute(ipranges[i].first, ipranges[i].second, ScanResults);
+				}
+			}
+		}
+		if (tracertIP.size() == 0)
+		{
+			ScanResults.push_back("###\nfunction48=SNMPScan\n$$$\n");
+			ScanResults.push_back("No routers found\n");
+		}
+		else
+		{
+			tracertIP.erase(unique(tracertIP.begin(), tracertIP.end()), tracertIP.end());
+			snmp_Segment_Scan(tracertIP, ScanResults);
+		}
+	}
+	cout << "os scan start..." << endl;
+	if (host_os_flag)
+	{
+		if (aliveHostScaned)
+		{
+			os_info_scan(aliveIP, ScanResults);
+		}
+		else
+		{
+			vector<unsigned long> ip_os_to_scan;
+			for (i = 0; i < ipranges.size(); i++)
+			{
+				for (int j = swap_endian(ipranges[i].first); j <= swap_endian(ipranges[i].second); j++)
+				{
+					ip_os_to_scan.push_back(swap_endian(j));
+				}
+			}
+			os_info_scan(ip_os_to_scan, ScanResults);
+		}
+	}
+	//add on 1110
+	ScanResults.push_back("$$AAABBB$$");
+	////
 }
 
-static int SmbScan2(unsigned long ipaddr, int flag139, vector<string>& ScanResults)
+void Scan::os_info_scan(vector<unsigned long> aliveIp, vector<string>& ScanResults)
 {
-	WSADATA wsaData;
-	unsigned int sock, addr, i;
-	unsigned short smbport = 445;
-	if (flag139 == 1)
-		smbport = 139;
-	unsigned char* infobuf;
-	int rc;
-	struct sockaddr_in smbtcp;
-	unsigned int zeroc = 0;
-	timeval tv = { 100 ,0 };
-	if (WSAStartup(MAKEWORD(2, 1), &wsaData) != 0)
-	{
-		printf("WSAStartup failed !\n");
-		exit(-1);
+	in_addr mAddr;
+	vector<uint16_t>wports = { 135,139,445,3389 };
+	vector<uint16_t>lports = { 22,111 };
+
+	SOCKET mysocket = INVALID_SOCKET;
+	sockaddr_in my_addr;
+	timeval tv = { 1000 ,0 };
+	int opt = 5;
+	int status, ret;
+	WSADATA wsa;
+	if (status = WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		exit(EXIT_FAILURE);
 	}
-	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (!sock)
+
+	ScanResults.push_back("###\nfunction49=OSScan\n$$$\nOperation system information scan...\n");
+	for (int i = 0; i < aliveIp.size(); i++)
 	{
-		printf("socket() error...\n");
-		exit(-1);
-	}
-	if ((setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval))) < -1)
-		return -1;
-	smbtcp.sin_addr.s_addr = ipaddr;
-	smbtcp.sin_family = AF_INET;
-	smbtcp.sin_port = htons(smbport);
+		mAddr.S_un.S_addr = aliveIp[i];
+		char buff[100];
+		bool ifwin = false;
+		bool if445 = false;
+		int cnt = 0;
+		snprintf(buff, 100, "OS Scanning IP: %s\t", inet_ntoa(mAddr));
+		ScanResults.push_back(buff);
 
-	infobuf = new unsigned char[1024];
-	memset(infobuf, 0, 1024);
-
-	rc = connect(sock, (struct sockaddr*)&smbtcp, sizeof(struct sockaddr_in));
-
-	if (rc == 0)
-	{
-		if (flag139 == 1)
+		while (cnt < wports.size())
 		{
-			send(sock, (char*)d3, sizeof(d3) - 1, 0);
-			rc = recv(sock, (char*)infobuf, 1024, 0);
-		}
-		send(sock, (char*)d1, sizeof(d1), 0);
-		rc = recv(sock, (char*)infobuf, 1024, 0);
-		send(sock, (char*)d2, sizeof(d2), 0);
-		rc = recv(sock, (char*)infobuf, 1024, 0);
+			if ((mysocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
+			{
+				perror("socket:");
+				continue;
+			}
+			setsockopt(mysocket, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(timeval));
+			setsockopt(mysocket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
+			if ((setsockopt(mysocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval))) < -1)
+				return;
+			my_addr.sin_family = AF_INET;
+			my_addr.sin_addr.s_addr = aliveIp[i];
+			my_addr.sin_port = htons(wports[cnt]);
+			ret = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+			if (ret != -1)
+			{
+				ifwin = true;
+				if (cnt == 2)
+					if445 = true;
+			}
+			cnt++;
 
-		if (rc > 0)
+		}
+		if (ifwin)
 		{
-			vector<string> results;
-			uint32_t len;
-			len = (int)infobuf[3] + (int)infobuf[2] * 256;
-			char buff[1024];
-			memcpy(buff, infobuf + len - 128, 128);
-			SplitString(buff, 128, results);
-			cout << results.back() << endl;
-			snprintf(buff, 1024, "%s\n", results.back().c_str());
-			ScanResults.push_back(buff);
+			ScanResults.push_back("Windows\t\n");
+#ifndef KASPERKEY
+			if (if445)
+				SmbScan2(aliveIp[i], false, ScanResults);
+			else
+				ScanResults.push_back("\n");
+#else
 			ScanResults.push_back("\n");
+#endif
 		}
-		else {
-			ScanResults.push_back("\n");
+		else
+		{
+			my_addr.sin_port = htons(22);
+			ret = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+			my_addr.sin_port = htons(111);
+			int ret2 = connect(mysocket, (sockaddr*)&my_addr, sizeof(sockaddr));
+			if (ret != -1 || ret2 != -1)
+			{
+				ScanResults.push_back("Linux\n");
+			}
+			else
+			{
+				ScanResults.push_back("Windows/Linux\n");
+			}
 		}
+		closesocket(mysocket);
 	}
-	closesocket(sock);
-	free(infobuf);
-	return 0;
 }

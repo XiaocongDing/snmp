@@ -18,9 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="scan.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -33,9 +30,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="icmp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TcpScan.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
